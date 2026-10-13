@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\App\SmsSettingsController;
 use App\Models\Appointment;
 use App\Models\Clinic;
 use App\Services\SmsService;
@@ -21,12 +20,14 @@ class SendReminders extends Command
             if (! SmsService::clinicCreds($c->id)) {
                 return;
             }
-            $on24 = (bool) $c->setting('sms_remind_24h', true);
-            $on2 = (bool) $c->setting('sms_remind_2h', true);
+            if ($c->setting('sms_enabled', true) === false) {
+                return;
+            }
+            $on24 = (bool) \App\Support\SmsEvents::get($c, 'remind_24h')['enabled'];
+            $on2 = (bool) \App\Support\SmsEvents::get($c, 'remind_2h')['enabled'];
             if (! $on24 && ! $on2) {
                 return;
             }
-            $tpl = $c->setting('sms_tpl_reminder') ?: SmsSettingsController::DEFAULT_TPL;
 
             $apps = Appointment::withoutGlobalScopes()->with(['patient', 'doctor'])
                 ->where('clinic_id', $c->id)->whereIn('status', ['scheduled', 'arrived'])
@@ -43,11 +44,9 @@ class SendReminders extends Command
                 if (! $which || ! $a->patient?->phone) {
                     continue;
                 }
-                $text = strtr($tpl, [
-                    ':name' => $a->patient->first_name, ':date' => $a->starts_at->format('d.m.Y H:i'), ':clinic' => $c->name,
-                    ':doctor' => $a->doctor?->name ?? '', ':address' => $c->address ?? '',
+                SmsService::event($c, $which === 'remind_2h_at' ? 'remind_2h' : 'remind_24h', $a->patient->phone, [
+                    'name' => $a->patient->first_name, 'date' => $a->starts_at->format('d.m.Y H:i'), 'doctor' => $a->doctor?->name ?? '',
                 ]);
-                SmsService::send($a->patient->phone, $text, $c->id, true);
                 $upd = [$which => now()];
                 if ($which === 'remind_2h_at') {
                     $upd['remind_24h_at'] = $a->remind_24h_at ?? now();

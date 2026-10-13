@@ -33,13 +33,20 @@ class SmsService
      *                        (bemorlarga xabarlar). Ulanmagan bo'lsa umumiy akkauntga O'TILMAYDI.
      *                        false — platforma xabarlari (OTP, obuna xabarlari) umumiy akkaunt orqali.
      */
-    public static function send(?string $phone, string $text, ?int $clinicId = null, bool $viaClinic = false): bool
+    public static function send(?string $phone, string $text, ?int $clinicId = null, bool $viaClinic = false, ?string $event = null): bool
     {
         $phone = static::normalize($phone);
         if (strlen($phone) < 12) {
             return false;
         }
-        $log = SmsLog::create(['clinic_id' => $clinicId, 'phone' => $phone, 'message' => $text, 'status' => 'pending']);
+        $log = SmsLog::create(['clinic_id' => $clinicId, 'phone' => $phone, 'message' => $text, 'status' => 'pending', 'event' => $event]);
+
+        // Klinika SMS xizmatini o'chirib qo'ygan bo'lsa, bemorlarga hech narsa yuborilmaydi
+        if ($viaClinic && $clinicId && Clinic::find($clinicId)?->setting('sms_enabled', true) === false) {
+            $log->update(['status' => 'skipped', 'response' => "SMS xizmati klinika tomonidan o'chirilgan"]);
+
+            return false;
+        }
 
         $creds = $viaClinic ? static::clinicCreds($clinicId) : static::platformCreds();
         if (! $creds) {
@@ -64,6 +71,81 @@ class SmsService
 
             return false;
         }
+    }
+
+    /**
+     * Hodisa bo'yicha SMS: yoqilganligi, Eskiz tasdig'i va shablon matni tekshiriladi.
+     * @param Clinic|int $clinic
+     */
+    public static function event($clinic, string $event, ?string $phone, array $vars = []): bool
+    {
+        $c = $clinic instanceof Clinic ? $clinic : Clinic::find($clinic);
+        if (! $c || ! $phone) {
+            return false;
+        }
+        $tpl = \App\Support\SmsEvents::get($c, $event);
+        if (! $tpl['enabled'] || $c->setting('sms_enabled', true) === false) {
+            return false;
+        }
+        $text = \App\Support\SmsEvents::render($tpl['text'], $vars + ['clinic' => $c->name, 'address' => (string) $c->address]);
+        if ($c->setting('sms_need_approval', true) && $tpl['status'] !== 'approved') {
+            $log = SmsLog::create(['clinic_id' => $c->id, 'phone' => static::normalize($phone), 'message' => $text, 'status' => 'skipped', 'event' => $event,
+                'response' => 'Shablon Eskiz tomonidan tasdiqlanmagan ('.\App\Support\SmsEvents::statusLabel($tpl['status']).')']);
+
+            return false;
+        }
+
+        return static::send($phone, $text, $c->id, true, $event);
+    }
+
+    // ---------------- Eskiz shablonlari ----------------
+
+    /** @return array{ok:bool,id:?int,message:?string} */
+    public static function submitTemplate(array $creds, string $text): array
+    {
+        try {
+            $res = Http::timeout(20)->withToken(static::token($creds))->asForm()->post('https://notify.eskiz.uz/api/user/template', ['template' => $text]);
+            if ($res->status() === 401) {
+                Cache::forget($creds['key']);
+                $res = Http::timeout(20)->withToken(static::token($creds))->asForm()->post('https://notify.eskiz.uz/api/user/template', ['template' => $text]);
+            }
+            $id = $res->json('id') ?? $res->json('data.id') ?? $res->json('result.id') ?? $res->json('template.id');
+
+            return ['ok' => $res->successful(), 'id' => $id ? (int) $id : null, 'message' => $res->successful() ? null : mb_substr((string) ($res->json('message') ?: $res->body()), 0, 300)];
+        } catch (\Throwable $e) {
+            return ['ok' => false, 'id' => null, 'message' => $e->getMessage()];
+        }
+    }
+
+    /** @return array{ok:bool,rows:array,message:?string} */
+    public static function fetchTemplates(array $creds): array
+    {
+        try {
+            $res = Http::timeout(20)->withToken(static::token($creds))->get('https://notify.eskiz.uz/api/user/templates');
+            if ($res->status() === 401) {
+                Cache::forget($creds['key']);
+                $res = Http::timeout(20)->withToken(static::token($creds))->get('https://notify.eskiz.uz/api/user/templates');
+            }
+            $rows = $res->json('result') ?? $res->json('data') ?? $res->json();
+
+            return ['ok' => $res->successful() && is_array($rows), 'rows' => is_array($rows) ? array_values($rows) : [], 'message' => $res->successful() ? null : mb_substr($res->body(), 0, 300)];
+        } catch (\Throwable $e) {
+            return ['ok' => false, 'rows' => [], 'message' => $e->getMessage()];
+        }
+    }
+
+    /** Eskiz holatini bizning holatga o'tkazish. */
+    public static function mapTemplateStatus(?string $s): string
+    {
+        $s = strtolower(trim((string) $s));
+        if (in_array($s, ['service', 'approved', 'active', 'accepted', 'confirmed', 'success', 'verified'], true)) {
+            return 'approved';
+        }
+        if (in_array($s, ['reject', 'rejected', 'declined', 'cancel', 'canceled', 'cancelled', 'blocked'], true)) {
+            return 'rejected';
+        }
+
+        return 'moderation';
     }
 
     public static function platformCreds(): ?array

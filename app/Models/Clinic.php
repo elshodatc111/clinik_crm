@@ -64,6 +64,11 @@ class Clinic extends Model
         return $this->hasMany(BalanceTransaction::class)->latest('id');
     }
 
+    public function bookingUrl(): ?string
+    {
+        return $this->slug ? url('/k/'.$this->slug) : null;
+    }
+
     public function setting(string $key, $default = null)
     {
         return data_get($this->settings, $key, $default);

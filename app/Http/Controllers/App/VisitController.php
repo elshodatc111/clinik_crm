@@ -47,7 +47,7 @@ class VisitController extends Controller
     {
         $user = $r->user();
         $visits = Visit::with(['patient', 'doctor'])->latest('visited_at')
-            ->when($user->role === 'doctor', fn ($q) => $q->where('doctor_id', $user->id))
+            ->when($user->isScopedDoctor(), fn ($q) => $q->where('doctor_id', $user->id))
             ->when($r->query('patient_id'), fn ($q, $p) => $q->where('patient_id', $p))
             ->paginate(25)->withQueryString();
 
@@ -75,7 +75,7 @@ class VisitController extends Controller
         ]);
         $patient = Patient::findOrFail($d['patient_id']);
         $appointment = $d['appointment_id'] ? Appointment::findOrFail($d['appointment_id']) : null;
-        $doctorId = $r->user()->role === 'doctor' ? $r->user()->id : ($d['doctor_id'] ?? $appointment?->doctor_id);
+        $doctorId = $r->user()->isScopedDoctor() ? $r->user()->id : ($d['doctor_id'] ?? $appointment?->doctor_id);
         if (! $doctorId) {
             return back()->withInput()->withErrors(['doctor_id' => __('Shifokorni tanlang.')]);
         }
@@ -140,7 +140,7 @@ class VisitController extends Controller
 
     protected function authorizeEdit(Request $r, Visit $visit): void
     {
-        if ($r->user()->role === 'doctor') {
+        if ($r->user()->isScopedDoctor()) {
             abort_unless($visit->doctor_id === $r->user()->id, 403);
         }
     }

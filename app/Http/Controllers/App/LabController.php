@@ -37,7 +37,7 @@ class LabController extends Controller
             'patient_id' => 'required|integer', 'test_name' => 'required|string|max:200', 'doctor_id' => 'nullable|integer',
         ]);
         $patient = Patient::findOrFail($d['patient_id']);
-        $doctorId = $r->user()->role === 'doctor' ? $r->user()->id : ($d['doctor_id'] ?? null);
+        $doctorId = $r->user()->isScopedDoctor() ? $r->user()->id : ($d['doctor_id'] ?? null);
         if ($doctorId) {
             User::clinicDoctors()->findOrFail($doctorId);
         }
@@ -79,9 +79,8 @@ class LabController extends Controller
         }
         $lab->update($update);
 
-        if ($hasResult && ! $wasDone && $r->boolean('notify') && $lab->patient?->phone && view()->shared('clinic')?->setting('sms_lab_ready', true)) {
-            $clinicName = view()->shared('clinic')?->name ?? BillingService::appName();
-            SmsService::send($lab->patient->phone, __('Hurmatli :name, tahlil natijangiz tayyor. :clinic', ['name' => $lab->patient->first_name, 'clinic' => $clinicName]), $lab->clinic_id, true);
+        if ($hasResult && ! $wasDone && $r->boolean('notify') && $lab->patient?->phone) {
+            SmsService::event($lab->clinic_id, 'lab_ready', $lab->patient->phone, ['name' => $lab->patient->first_name]);
         }
 
         return redirect()->route('app.lab.index')->with('success', __('Natija saqlandi.'));
@@ -92,5 +91,17 @@ class LabController extends Controller
         abort_unless($lab->file_path && Storage::disk('local')->exists($lab->file_path), 404);
 
         return Storage::disk('local')->response($lab->file_path);
+    }
+
+    /** Tahlilni faqat direktor o'chira oladi. */
+    public function destroy(Request $r, LabOrder $lab)
+    {
+        abort_unless($r->user()->isDirector(), 403, __("Tahlilni faqat direktor o'chira oladi."));
+        if ($lab->file_path) {
+            Storage::disk('local')->delete($lab->file_path);
+        }
+        $lab->delete();
+
+        return redirect()->route('app.lab.index')->with('success', __("Tahlil o'chirildi."));
     }
 }

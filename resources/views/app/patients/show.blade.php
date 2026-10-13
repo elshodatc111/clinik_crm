@@ -1,7 +1,9 @@
 @extends('layouts.app')
 @section('title', $patient->full_name)
 @section('content')
-@php($u = auth()->user())
+@php
+    $u = auth()->user();
+@endphp
 <div class="card p-5">
     <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -31,6 +33,53 @@
         @if($patient->notes)<div class="sm:col-span-2"><span class="text-slate-500">{{ __('Izoh') }}:</span> {{ $patient->notes }}</div>@endif
     </div>
 </div>
+
+@if($balance)
+@php
+    $bal = $balance['balance'];
+    $methodsList = collect(\App\Models\Invoice::methods())->map(fn ($l) => __($l))->all();
+@endphp
+<div class="card p-5 mt-4" x-data="{ f: null }">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <span class="h-12 w-12 rounded-xl grid place-items-center {{ $bal < 0 ? 'bg-red-50 text-red-600' : ($bal > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500') }}"><x-icon :name="$bal < 0 ? 'alert' : 'wallet'" class="w-6 h-6" /></span>
+            <div>
+                <div class="text-xs text-slate-500">{{ __('Bemorning umumiy balansi') }}</div>
+                <div class="text-2xl font-bold {{ $bal < 0 ? 'text-red-600' : ($bal > 0 ? 'text-emerald-600' : 'text-slate-900') }}">
+                    @if($bal < 0){{ __('Qarz') }}: {{ money(-$bal) }}@elseif($bal > 0){{ __('Ortiqcha to\'lov (avans)') }}: {{ money($bal) }}@else{{ __('Qarz yo\'q') }} · 0 {{ __("so'm") }}@endif
+                </div>
+                <div class="text-xs text-slate-500 mt-0.5">{{ __('Hisob-fakturalar qarzi') }}: {{ money($balance['debt']) }} · {{ __('Avans') }}: {{ money($balance['credit']) }}</div>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button type="button" class="btn btn-sm btn-primary" @click="f = f === 'dep' ? null : 'dep'"><x-icon name="plus" class="w-4 h-4" />{{ __('Avans qabul qilish') }}</button>
+            @if($balance['credit'] > 0)<button type="button" class="btn btn-sm" @click="f = f === 'ref' ? null : 'ref'">{{ __('Avansni qaytarish') }}</button>@endif
+        </div>
+    </div>
+    <form method="POST" action="{{ route('app.patients.deposit', $patient) }}" x-show="f === 'dep'" x-cloak class="mt-4 grid md:grid-cols-4 gap-2 items-end">@csrf
+        <input type="number" name="amount" min="1" class="input" placeholder="{{ __('Summa') }}" value="{{ $bal < 0 ? -$bal : '' }}" required>
+        <select name="method" class="input">@foreach($methodsList as $k => $l)<option value="{{ $k }}">{{ $l }}</option>@endforeach</select>
+        <input type="text" name="note" class="input" placeholder="{{ __('Izoh') }}">
+        <button class="btn btn-primary">{{ __('Qabul qilish') }}</button>
+    </form>
+    @if($balance['credit'] > 0)
+    <form method="POST" action="{{ route('app.patients.refund', $patient) }}" x-show="f === 'ref'" x-cloak class="mt-4 grid md:grid-cols-4 gap-2 items-end" onsubmit="return confirm({{ \Illuminate\Support\Js::from(__('Avans bemorga qaytarilsinmi?')) }})">@csrf
+        <input type="number" name="amount" min="1" max="{{ $balance['credit'] }}" class="input" value="{{ $balance['credit'] }}" required>
+        <select name="method" class="input"><option value="cash">{{ __('Naqd') }}</option><option value="card">{{ __('Karta') }}</option><option value="transfer">{{ __("Bank o'tkazmasi") }}</option></select>
+        <input type="text" name="note" class="input" placeholder="{{ __('Izoh') }}">
+        <button class="btn">{{ __('Qaytarish') }}</button>
+    </form>
+    @endif
+    @if($advances && ($advances['payments']->isNotEmpty() || $advances['used']->isNotEmpty()))
+    <div class="mt-4 border-t border-slate-100 pt-3 grid md:grid-cols-2 gap-4 text-sm">
+        <div><div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">{{ __('Kelgan avanslar') }}</div>
+            @foreach($advances['payments'] as $ap)<div class="flex justify-between py-1"><span class="text-slate-600">{{ $ap->paid_at->format('d.m.Y') }} · {{ __(\App\Models\Invoice::methods()[$ap->method] ?? $ap->method) }}</span><b class="text-emerald-600">+ {{ money($ap->amount) }}</b></div>@endforeach</div>
+        <div><div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">{{ __('Sarflangan / qaytarilgan') }}</div>
+            @foreach($advances['used'] as $au)<div class="flex justify-between py-1"><span class="text-slate-600">{{ $au->created_at->format('d.m.Y') }} · {{ $au->kind === 'refund' ? __('Qaytarildi') : __('Hisob-faktura yopildi') }}</span><b>− {{ money($au->amount) }}</b></div>@endforeach</div>
+    </div>
+    @endif
+</div>
+@endif
 
 <div class="grid lg:grid-cols-2 gap-4 mt-4">
     <div class="card overflow-hidden">

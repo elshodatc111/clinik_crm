@@ -102,6 +102,7 @@ class InvoiceController extends Controller
             'amount' => 'required|integer|min:1',
             'method' => 'required|in:'.implode(',', array_keys(Invoice::methods())),
             'note' => 'nullable|string|max:200',
+            'overpay' => 'nullable|boolean',
         ]);
 
         $err = DB::transaction(function () use ($invoice, $d, $r) {
@@ -109,14 +110,25 @@ class InvoiceController extends Controller
             if ($inv->status === 'canceled') {
                 return __('Bekor qilingan hisob-fakturaga to\'lov qabul qilinmaydi.');
             }
-            if ($d['amount'] > $inv->remaining()) {
-                return __("To'lov summasi qoldiqdan oshib ketdi. Qoldiq: :s", ['s' => \App\Support\Tenant::money($inv->remaining())]);
+            $excess = max(0, $d['amount'] - $inv->remaining());
+            if ($excess > 0 && ! $r->boolean('overpay')) {
+                return __("To'lov summasi qoldiqdan oshib ketdi. Qoldiq: :s. Ortiqchasini avans sifatida qoldirish uchun belgini qo'ying.", ['s' => \App\Support\Tenant::money($inv->remaining())]);
             }
-            Payment::create([
-                'invoice_id' => $inv->id, 'amount' => $d['amount'], 'method' => $d['method'],
-                'cashier_id' => $r->user()->id, 'paid_at' => now(), 'note' => $d['note'] ?? null,
-            ]);
-            $inv->paid += $d['amount'];
+            $toInvoice = $d['amount'] - $excess;
+            if ($toInvoice > 0) {
+                Payment::create([
+                    'invoice_id' => $inv->id, 'amount' => $toInvoice, 'method' => $d['method'],
+                    'cashier_id' => $r->user()->id, 'paid_at' => now(), 'note' => $d['note'] ?? null,
+                ]);
+            }
+            if ($excess > 0) {
+                // Ortiqcha to'lov bemorning avansiga o'tadi
+                Payment::create([
+                    'invoice_id' => null, 'patient_id' => $inv->patient_id, 'amount' => $excess, 'method' => $d['method'],
+                    'cashier_id' => $r->user()->id, 'paid_at' => now(), 'note' => __('Ortiqcha to\'lov').' '.$inv->number,
+                ]);
+            }
+            $inv->paid += $toInvoice;
             $inv->status = $inv->remaining() === 0 ? 'paid' : 'partial';
             $inv->save();
 

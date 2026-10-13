@@ -12,7 +12,8 @@
             <tr><td class="td whitespace-nowrap">{{ $l->ordered_at->format('d.m.Y H:i') }}</td><td class="td"><a class="link" href="{{ route('app.patients.show', $l->patient_id) }}">{{ $l->patient?->full_name }}</a></td>
                 <td class="td">{{ $l->test_name }}<div class="text-xs text-slate-500">{{ \Illuminate\Support\Str::limit($l->result_value, 80) }}</div></td><td class="td">{{ $l->doctor?->name }}</td>
                 <td class="td"><x-badge :color="$l->status === 'done' ? 'green' : 'yellow'">{{ $l->status === 'done' ? __('Tayyor') : __('Kutilmoqda') }}</x-badge></td>
-                <td class="td text-right whitespace-nowrap">@if($l->file_path)<a class="btn btn-sm" href="{{ route('app.lab.file', $l) }}" target="_blank">{{ __('Fayl') }}</a>@endif <a class="btn btn-sm" href="{{ route('app.lab.edit', $l) }}">{{ $l->status === 'done' ? __("Ko'rish/tahrir") : __('Natija kiritish') }}</a></td></tr>
+                <td class="td text-right whitespace-nowrap">@if($l->file_path)<a class="btn btn-sm" href="{{ route('app.lab.file', $l) }}" target="_blank">{{ __('Fayl') }}</a>@endif <a class="btn btn-sm" href="{{ route('app.lab.edit', $l) }}">{{ $l->status === 'done' ? __("Ko'rish/tahrir") : __('Natija kiritish') }}</a>
+                    @if(auth()->user()->isDirector())<form method="POST" action="{{ route('app.lab.destroy', $l) }}" class="inline" onsubmit="return confirm({{ \Illuminate\Support\Js::from(__('Tahlilni o\'chirasizmi? Bu amalni qaytarib bo\'lmaydi.')) }})">@csrf @method('DELETE')<button class="btn btn-sm !text-red-600" title="{{ __('O\'chirish') }}"><x-icon name="trash" class="w-3.5 h-3.5" /></button></form>@endif</td></tr>
         @empty<tr><td class="td text-slate-500" colspan="6">{{ __('Tahlillar yo\'q') }}</td></tr>@endforelse
     </table>
 </div>

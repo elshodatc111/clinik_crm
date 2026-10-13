@@ -16,7 +16,7 @@ class DashboardController extends Controller
     {
         $user = $r->user();
         $apps = Appointment::with(['patient', 'doctor', 'service'])->whereDate('starts_at', today())
-            ->when($user->role === 'doctor', fn ($q) => $q->where('doctor_id', $user->id))
+            ->when($user->isScopedDoctor(), fn ($q) => $q->where('doctor_id', $user->id))
             ->orderBy('starts_at');
 
         $count = Patient::count();
@@ -31,10 +31,20 @@ class DashboardController extends Controller
             $chartRevenue[] = (int) ($rev[$day->toDateString()] ?? 0);
         }
         $statusCounts = Appointment::where('starts_at', '>=', now()->startOfMonth())
-            ->when($user->role === 'doctor', fn ($q) => $q->where('doctor_id', $user->id))
+            ->when($user->isScopedDoctor(), fn ($q) => $q->where('doctor_id', $user->id))
             ->selectRaw('status, COUNT(*) as c')->groupBy('status')->pluck('c', 'status');
 
+        // Klinika admini uchun tavsiyalar (kamchiliklar) — kuniga bir marta ilova ichida xabar ham yuboriladi
+        $issues = [];
+        if ($user->role === 'clinic_admin' && ($clinic = \App\Models\Clinic::find($user->clinic_id))) {
+            $issues = \Illuminate\Support\Facades\Cache::remember('diag_issues_'.$clinic->id, 600, fn () => \App\Services\ClinicDiagnostics::run($clinic));
+            if (\Illuminate\Support\Facades\Cache::add('diag_notified_'.$clinic->id, 1, now()->addDay())) {
+                \App\Services\ClinicDiagnostics::notify($clinic, $issues);
+            }
+        }
+
         return view('app.dashboard', [
+            'issues' => $issues,
             'chartLabels' => $chartLabels, 'chartRevenue' => $chartRevenue, 'statusCounts' => $statusCounts,
             'patients' => $count,
             'plan' => BillingService::planFor($count),

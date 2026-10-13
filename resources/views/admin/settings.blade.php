@@ -15,8 +15,21 @@
                     <x-field name="remove_logo" type="checkbox" :label="__('Logotipni o\'chirish')" /></div>
                 @endif
             </div>
-            <x-field name="support_phone" :label="__('Aloqa telefoni')" :value="$s['support_phone'] ?? ''" />
-            <x-field name="support_email" type="email" :label="__('Aloqa emaili')" :value="$s['support_email'] ?? ''" />
+        </div>
+    </div>
+
+    <div class="card p-6">
+        <div class="flex items-center gap-2 font-semibold mb-1"><x-icon name="phone" class="w-4 h-4" />{{ __("Aloqa ma'lumotlari") }}</div>
+        <p class="text-xs text-slate-500 mb-4">{{ __("Bosh sahifadagi «Bog'lanish» bo'limi va sahifa pastida shu ma'lumotlar ko'rinadi. Bo'sh qoldirilgan maydon ko'rsatilmaydi.") }}</p>
+        <div class="grid md:grid-cols-2 gap-4">
+            <x-field name="support_phone" :label="__('Telefon')" :value="$s['support_phone'] ?? ''" placeholder="+998 90 123 45 67" />
+            <x-field name="support_phone2" :label="__('Qo\'shimcha telefon')" :value="$s['support_phone2'] ?? ''" />
+            <x-field name="support_email" type="email" :label="__('Email')" :value="$s['support_email'] ?? ''" />
+            <x-field name="contact_hours" :label="__('Ish vaqti')" :value="$s['contact_hours'] ?? ''" placeholder="Du–Sha 09:00–18:00" />
+            <x-field name="contact_address" :label="__('Manzil')" :value="$s['contact_address'] ?? ''" span="2" />
+            <x-field name="contact_telegram" :label="__('Telegram (@nom yoki havola)')" :value="$s['contact_telegram'] ?? ''" placeholder="@klinika_crm" />
+            <x-field name="contact_instagram" :label="__('Instagram (@nom yoki havola)')" :value="$s['contact_instagram'] ?? ''" />
+            <x-field name="contact_map_url" :label="__('Xarita (Google Maps embed havolasi, https://...)')" :value="$s['contact_map_url'] ?? ''" span="2" :hint="__('Google Maps → Ulashish → Xaritani joylashtirish → iframe ichidagi src manzilini qo\'ying.')" />
         </div>
     </div>
 

@@ -25,8 +25,42 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 Route::get('/dashboard', [AuthController::class, 'home'])->name('dashboard')->middleware('auth');
 
-// Payme Merchant API (JSON-RPC)
+// Payme Merchant API (JSON-RPC): platforma obunalari uchun
 Route::post('/payme', [PaymeController::class, 'handle'])->name('payme');
+// Har bir klinikaning o'z Payme kassasi (onlayn qabul to'lovlari)
+Route::post('/payme/c/{slug}', [\App\Http\Controllers\ClinicPaymeController::class, 'handle'])->name('payme.clinic');
+
+// Klinikaning ommaviy onlayn qabul sahifasi
+Route::prefix('k/{slug}')->name('booking.')->group(function () {
+    $b = \App\Http\Controllers\BookingController::class;
+    Route::get('/', [$b, 'show'])->name('show');
+    Route::get('/offer', [$b, 'offer'])->name('offer');
+    Route::get('/slots', [$b, 'slots'])->middleware('throttle:60,1')->name('slots');
+    Route::post('/book', [$b, 'book'])->middleware('throttle:10,1')->name('book');
+    Route::get('/t/{token}', [$b, 'ticket'])->name('ticket');
+    Route::get('/t/{token}/status', [$b, 'status'])->middleware('throttle:60,1')->name('status');
+    Route::post('/t/{token}/simulate', [$b, 'simulate'])->name('simulate');
+});
+
+// Shaxsiy profil (har bir xodim va super admin uchun)
+Route::middleware('auth')->prefix('account')->name('account.')->group(function () {
+    $a = \App\Http\Controllers\AccountController::class;
+    Route::get('/', [$a, 'edit'])->name('edit');
+    Route::put('/', [$a, 'update'])->name('update');
+    Route::put('password', [$a, 'password'])->name('password');
+    Route::delete('avatar', [$a, 'removeAvatar'])->name('avatar.delete');
+});
+
+// Bildirishnomalar (klinika xodimlari va super admin) va ilovani o'rnatish (PWA)
+Route::get('/manifest.webmanifest', [\App\Http\Controllers\PwaController::class, 'manifest'])->name('pwa.manifest');
+Route::get('/offline', [\App\Http\Controllers\PwaController::class, 'offline'])->name('pwa.offline');
+Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+    $n = \App\Http\Controllers\NotificationController::class;
+    Route::get('/', [$n, 'index'])->name('index');
+    Route::get('feed', [$n, 'feed'])->name('feed');
+    Route::post('read-all', [$n, 'readAll'])->name('readall');
+    Route::post('{notification}/read', [$n, 'read'])->name('read');
+});
 
 // ---------- Super Admin ----------
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])->group(function () {
@@ -56,11 +90,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])
     Route::get('transactions', [Admin\TransactionController::class, 'index'])->name('transactions.index');
     Route::get('audit', [Admin\AuditController::class, 'index'])->name('audit.index');
     Route::get('sms', [Admin\SmsController::class, 'index'])->name('sms.index');
+    Route::get('system', [Admin\SystemController::class, 'index'])->name('system.index');
+    Route::get('notifications', [Admin\BroadcastController::class, 'index'])->name('notifications.index');
+    Route::post('notifications', [Admin\BroadcastController::class, 'send'])->name('notifications.send');
+    Route::get('diagnostics', [Admin\BroadcastController::class, 'diagnostics'])->name('diagnostics.index');
+    Route::post('diagnostics/all', [Admin\BroadcastController::class, 'notifyAll'])->name('diagnostics.all');
+    Route::post('diagnostics/{clinic}', [Admin\BroadcastController::class, 'notifyClinic'])->name('diagnostics.clinic');
+    Route::delete('system/errors', [Admin\SystemController::class, 'clear'])->name('system.clear');
 });
 
 // ---------- Klinika paneli ----------
 Route::prefix('app')->name('app.')->middleware(['auth', 'clinic'])->group(function () {
     Route::get('/', [AppC\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('search', AppC\GlobalSearchController::class)->name('search');
     Route::post('impersonate/stop', [Admin\ClinicController::class, 'stopImpersonate'])->name('impersonate.stop');
 
     // Obuna va balans (bloklangan holatda ham ochiq)
@@ -74,6 +116,7 @@ Route::prefix('app')->name('app.')->middleware(['auth', 'clinic'])->group(functi
     // Bemorlar
     Route::middleware('role:clinic_admin,receptionist,doctor,cashier')->get('patients/search', [AppC\PatientController::class, 'search'])->name('patients.search');
     Route::middleware('role:clinic_admin,receptionist')->group(function () {
+        Route::get('patients/lookup', [AppC\PatientController::class, 'lookup'])->middleware('throttle:30,1')->name('patients.lookup');
         Route::get('patients/create', [AppC\PatientController::class, 'create'])->name('patients.create');
         Route::post('patients', [AppC\PatientController::class, 'store'])->name('patients.store');
         Route::get('patients/{patient}/edit', [AppC\PatientController::class, 'edit'])->name('patients.edit');
@@ -122,6 +165,9 @@ Route::prefix('app')->name('app.')->middleware(['auth', 'clinic'])->group(functi
         Route::get('invoices/{invoice}', [AppC\InvoiceController::class, 'show'])->name('invoices.show');
         Route::get('invoices/{invoice}/print', [AppC\InvoiceController::class, 'print'])->name('invoices.print');
         Route::post('invoices/{invoice}/payments', [AppC\InvoiceController::class, 'pay'])->name('invoices.pay');
+        Route::post('invoices/{invoice}/apply-credit', [AppC\PatientBalanceController::class, 'applyCredit'])->name('invoices.apply-credit');
+        Route::post('patients/{patient}/deposit', [AppC\PatientBalanceController::class, 'deposit'])->name('patients.deposit');
+        Route::post('patients/{patient}/refund', [AppC\PatientBalanceController::class, 'refund'])->name('patients.refund');
         Route::post('invoices/{invoice}/cancel', [AppC\InvoiceController::class, 'cancel'])->name('invoices.cancel');
     });
 
@@ -135,6 +181,7 @@ Route::prefix('app')->name('app.')->middleware(['auth', 'clinic'])->group(functi
         Route::get('lab/{lab}/edit', [AppC\LabController::class, 'edit'])->name('lab.edit');
         Route::put('lab/{lab}', [AppC\LabController::class, 'update'])->name('lab.update');
         Route::get('lab/{lab}/file', [AppC\LabController::class, 'file'])->name('lab.file');
+        Route::delete('lab/{lab}', [AppC\LabController::class, 'destroy'])->name('lab.destroy');
     });
 
     // Sozlamalar (faqat klinika admini)
@@ -144,11 +191,40 @@ Route::prefix('app')->name('app.')->middleware(['auth', 'clinic'])->group(functi
         Route::get('profile', [AppC\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('profile', [AppC\ProfileController::class, 'update'])->name('profile.update');
         Route::get('audit', [AppC\AuditController::class, 'index'])->name('audit.index');
+        Route::get('payroll', [AppC\PayrollController::class, 'index'])->name('payroll.index');
+        Route::get('payroll/print', [AppC\PayrollController::class, 'print'])->name('payroll.print');
+        Route::put('payroll/{payroll}/days', [AppC\PayrollController::class, 'days'])->name('payroll.days');
+        Route::post('payroll/{payroll}/pay', [AppC\PayrollController::class, 'pay'])->name('payroll.pay');
+        Route::post('payroll/adjust/{user}', [AppC\PayrollController::class, 'adjust'])->name('payroll.adjust');
+        Route::delete('payroll/adjustment/{adjustment}', [AppC\PayrollController::class, 'destroyAdjustment'])->name('payroll.adjustment.destroy');
         Route::get('sms', [AppC\SmsController::class, 'index'])->name('sms.index');
+        Route::get('online', [AppC\OnlineSettingsController::class, 'edit'])->name('online.edit');
+        Route::put('online', [AppC\OnlineSettingsController::class, 'update'])->name('online.update');
+        Route::get('pinfl', [AppC\PinflSettingsController::class, 'edit'])->name('pinfl.edit');
+        Route::put('pinfl', [AppC\PinflSettingsController::class, 'update'])->name('pinfl.update');
+        Route::post('pinfl/test', [AppC\PinflSettingsController::class, 'test'])->name('pinfl.test');
         Route::get('sms/settings', [AppC\SmsSettingsController::class, 'edit'])->name('sms.settings');
         Route::put('sms/settings', [AppC\SmsSettingsController::class, 'update'])->name('sms.settings.update');
         Route::post('sms/settings/test', [AppC\SmsSettingsController::class, 'test'])->name('sms.settings.test');
+        Route::post('sms/settings/toggle', [AppC\SmsSettingsController::class, 'toggle'])->name('sms.settings.toggle');
+        Route::post('sms/settings/connection', [AppC\SmsSettingsController::class, 'connection'])->name('sms.settings.connection');
+        Route::post('sms/templates/{event}', [AppC\SmsSettingsController::class, 'save'])->name('sms.tpl.save');
+        Route::post('sms/templates/{event}/submit', [AppC\SmsSettingsController::class, 'submit'])->name('sms.tpl.submit');
+        Route::post('sms/templates/{event}/check', [AppC\SmsSettingsController::class, 'check'])->name('sms.tpl.check');
+        Route::post('sms/templates/{event}/mark', [AppC\SmsSettingsController::class, 'mark'])->name('sms.tpl.mark');
     });
+
+    Route::middleware('role:clinic_admin,cashier')->group(function () {
+        Route::get('cash', [AppC\CashController::class, 'index'])->name('cash.index');
+        Route::get('cash/print', [AppC\CashController::class, 'print'])->name('cash.print');
+        Route::post('cash/movements', [AppC\CashController::class, 'store'])->name('cash.store');
+        Route::delete('cash/movements/{movement}', [AppC\CashController::class, 'destroy'])->name('cash.destroy');
+        Route::post('cash/close', [AppC\CashController::class, 'close'])->name('cash.close');
+        Route::post('cash/reopen', [AppC\CashController::class, 'reopen'])->name('cash.reopen');
+    });
+
+    Route::get('guides', [AppC\GuideController::class, 'index'])->name('guides.index');
+    Route::get('guides/{key}', [AppC\GuideController::class, 'show'])->name('guides.show');
 
     Route::middleware('role:clinic_admin,cashier')->get('reports', [AppC\ReportController::class, 'index'])->name('reports.index');
 });

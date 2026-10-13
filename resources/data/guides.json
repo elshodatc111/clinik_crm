@@ -1,0 +1,692 @@
+{
+ "director": {
+  "icon": "shield",
+  "illu": "director",
+  "roles": [
+   "clinic_admin"
+  ],
+  "title": {
+   "uz": "Direktor uchun yo'riqnoma",
+   "ru": "Руководство для директора"
+  },
+  "intro": {
+   "uz": "Direktor klinikaning barcha bo'limlarini ko'radi va boshqaradi: sozlamalar, xodimlar, moliya va obuna. Quyida birinchi kundan boshlab nima qilish kerakligi yozilgan.",
+   "ru": "Директор видит и управляет всеми разделами клиники: настройки, сотрудники, финансы и подписка. Ниже описано, что делать с первого дня."
+  },
+  "sections": [
+   {
+    "title": {
+     "uz": "1. Birinchi sozlash",
+     "ru": "1. Первичная настройка"
+    },
+    "steps": [
+     {
+      "uz": "«Klinika ma'lumotlari» bo'limida klinika nomi, manzil, telefon, ish vaqti va logotipni kiriting. Ular chek, retsept va chop etiladigan hujjatlarda chiqadi.",
+      "ru": "В разделе «Данные клиники» укажите название, адрес, телефон, часы работы и логотип. Они появятся в чеках, рецептах и печатных документах."
+     },
+     {
+      "uz": "«Xizmatlar va narxlar» bo'limida barcha xizmatlarni narxi va davomiyligi bilan qo'shing.",
+      "ru": "В разделе «Услуги и цены» добавьте все услуги с ценой и длительностью."
+     },
+     {
+      "uz": "«Xodimlar va rollar» bo'limida shifokor, qabulxona, kassir va laborantlarni qo'shing.",
+      "ru": "В разделе «Сотрудники и роли» добавьте врачей, регистратуру, кассиров и лаборантов."
+     }
+    ],
+    "tip": {
+     "uz": "Avval xizmatlar va xodimlarni kiriting — shundan keyin qabul va hisob-faktura yaratish osonlashadi.",
+     "ru": "Сначала внесите услуги и сотрудников — после этого записи и счета создаются проще."
+    }
+   },
+   {
+    "title": {
+     "uz": "2. Xodimlar, rollar va ruxsatlar",
+     "ru": "2. Сотрудники, роли и доступ"
+    },
+    "steps": [
+     {
+      "uz": "«Xodim qo'shish» tugmasi: F.I.Sh., telefon (bu uning logini), rol va parolni kiriting. Xodim shu telefon va parol bilan tizimga kiradi.",
+      "ru": "Кнопка «Добавить сотрудника»: Ф.И.О., телефон (это его логин), роль и пароль. Сотрудник входит в систему по этим телефону и паролю."
+     },
+     {
+      "uz": "Har bir xodimning rollari ro'yxatda belgi (badge) ko'rinishida chiqadi. «Rollar ruxsatlari jadvali» tugmasi qaysi rol qaysi bo'limni ko'rishini ko'rsatadi.",
+      "ru": "Роли каждого сотрудника отображаются в списке в виде меток. Кнопка «Таблица прав ролей» показывает, какая роль какие разделы видит."
+     },
+     {
+      "uz": "Qo'shimcha ruxsat: xodim kartasida «Qo'shimcha ruxsatlar» orqali asosiy roldan tashqari yana rol bering (masalan, kassirga qabulxona).",
+      "ru": "Дополнительный доступ: в карточке сотрудника в «Дополнительных правах» выдайте ещё роль помимо основной (например, кассиру — регистратуру)."
+     },
+     {
+      "uz": "Admin va direktor bir xil huquqqa ega, farqi lavozimda. Direktor akkauntini faqat direktor o'zgartira oladi.",
+      "ru": "Админ и директор имеют одинаковые права, различие в должности. Аккаунт директора может изменять только директор."
+     }
+    ],
+    "tip": {
+     "uz": "Ishdan ketgan xodimni o'chirmang — «Faol» belgisini olib tashlang. Tarix saqlanadi.",
+     "ru": "Не удаляйте уволившегося сотрудника — снимите отметку «Активен». История сохранится."
+    }
+   },
+   {
+    "title": {
+     "uz": "3. Obuna va balans",
+     "ru": "3. Подписка и баланс"
+    },
+    "steps": [
+     {
+      "uz": "Ro'yxatdan o'tgach 14 kunlik bepul demo ishlaydi. «Obuna va balans» bo'limida qolgan kunni ko'rasiz.",
+      "ru": "После регистрации действует бесплатное демо на 14 дней. В разделе «Подписка и баланс» видно оставшиеся дни."
+     },
+     {
+      "uz": "Balansni Payme orqali to'ldiring. Tarif bemorlar soniga qarab tanlanadi va har oy balansdan yechiladi.",
+      "ru": "Пополните баланс через Payme. Тариф выбирается по числу пациентов и ежемесячно списывается с баланса."
+     },
+     {
+      "uz": "Balans yetmasa tizim bosqichma-bosqich cheklanadi: avval ogohlantirish, keyin faqat ko'rish rejimi.",
+      "ru": "Если баланса не хватает, система ограничивается поэтапно: сначала предупреждение, затем режим только просмотра."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "4. Moliya: kassa, hisobot, ish haqi",
+     "ru": "4. Финансы: касса, отчёты, зарплата"
+    },
+    "steps": [
+     {
+      "uz": "«Kunlik kassa»: kun bo'yicha barcha to'lovlar naqd, karta, Payme, Click va o'tkazma bo'yicha alohida ko'rinadi.",
+      "ru": "«Дневная касса»: все платежи за день отдельно по наличным, карте, Payme, Click и переводам."
+     },
+     {
+      "uz": "«Hisobotlar»: tushum dinamikasi, shifokorlar, xizmatlar va reklama manbalari bo'yicha diagrammalar.",
+      "ru": "«Отчёты»: графики по динамике выручки, врачам, услугам и источникам рекламы."
+     },
+     {
+      "uz": "«Ish haqi»: xodim kartasida ish haqi turini (oylik, kunlik, foiz, aralash) belgilang. Oy oxirida hisob avtomatik chiqadi; mukofot, jarima va avansni qo'shib, «To'lash» tugmasini bosing — summa kassaga chiqim bo'lib yoziladi.",
+      "ru": "«Зарплата»: в карточке сотрудника задайте тип оплаты (оклад, посуточная, процент, смешанная). В конце месяца расчёт формируется автоматически; добавьте премию, штраф и аванс и нажмите «Выплатить» — сумма запишется в кассу как расход."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "5. Integratsiyalar",
+     "ru": "5. Интеграции"
+    },
+    "steps": [
+     {
+      "uz": "«SMS sozlamalari»: klinikangizning Eskiz akkaunti ma'lumotlarini kiriting — eslatma SMS lari shu orqali ketadi.",
+      "ru": "«Настройки SMS»: введите данные аккаунта Eskiz вашей клиники — напоминания будут отправляться через него."
+     },
+     {
+      "uz": "«Onlayn qabul»: sahifa manzilini oling, ish vaqtini belgilang, Payme Business'dagi o'z kassangiz ma'lumotlarini kiriting. Bemor to'lagach avtomatik navbatga yoziladi.",
+      "ru": "«Онлайн-запись»: получите адрес страницы, задайте график, введите данные своей кассы в Payme Business. После оплаты пациент автоматически попадает в очередь."
+     },
+     {
+      "uz": "«JSHSHIR xizmati»: provayder bilan shartnoma tuzgach API ma'lumotlarini kiriting va yoqing — bemor qo'shishda F.I.Sh. o'zi to'ladi.",
+      "ru": "«Сервис ПИНФЛ»: после договора с провайдером введите данные API и включите — при добавлении пациента Ф.И.О. заполняется само."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "6. Nazorat",
+     "ru": "6. Контроль"
+    },
+    "steps": [
+     {
+      "uz": "«Harakatlar jurnali»: kim, qachon, nimani o'zgartirgani yoziladi.",
+      "ru": "«Журнал действий»: фиксируется, кто, когда и что изменил."
+     },
+     {
+      "uz": "Tahlilni faqat direktor o'chira oladi. Yopilgan kassa kunini qayta ochish ham direktor/admin vakolatida.",
+      "ru": "Анализ может удалить только директор. Открыть закрытый кассовый день заново могут директор и админ."
+     },
+     {
+      "uz": "Har kuni kassa kuni yopilganini va farq yo'qligini tekshiring.",
+      "ru": "Ежедневно проверяйте, что кассовый день закрыт и нет расхождений."
+     }
+    ],
+    "tip": null
+   }
+  ]
+ },
+ "admin": {
+  "icon": "settings",
+  "illu": "admin",
+  "roles": [
+   "clinic_admin"
+  ],
+  "title": {
+   "uz": "Admin uchun yo'riqnoma",
+   "ru": "Руководство для администратора"
+  },
+  "intro": {
+   "uz": "Admin klinikaning kundalik ishini yuritadi: qabul, xodimlar, bemorlar va hisobotlar. Huquqlari direktor bilan bir xil.",
+   "ru": "Администратор ведёт ежедневную работу клиники: приём, сотрудники, пациенты и отчёты. Права те же, что у директора."
+  },
+  "sections": [
+   {
+    "title": {
+     "uz": "1. Kunlik ish tartibi",
+     "ru": "1. Ежедневный порядок работы"
+    },
+    "steps": [
+     {
+      "uz": "Kun boshida «Bosh sahifa»da bugungi qabullar va tushumni ko'ring.",
+      "ru": "В начале дня на «Главной» посмотрите записи и выручку за сегодня."
+     },
+     {
+      "uz": "«Qabul kalendari»da shifokorlar jadvalini tekshiring; bo'sh katakni bosib yangi qabul yozing.",
+      "ru": "В «Календаре приёма» проверьте график врачей; нажав на свободную ячейку, создайте новую запись."
+     },
+     {
+      "uz": "Kechikkan yoki kelmagan bemorlarning holatini «Qabullar» bo'limida yangilang.",
+      "ru": "Обновляйте статусы опоздавших и не пришедших пациентов в разделе «Приёмы»."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "2. Xodimlar bilan ishlash",
+     "ru": "2. Работа с сотрудниками"
+    },
+    "steps": [
+     {
+      "uz": "Yangi xodim: «Xodimlar va rollar» → «Xodim qo'shish». Telefon — login, parolni xodimga o'zingiz bering.",
+      "ru": "Новый сотрудник: «Сотрудники и роли» → «Добавить сотрудника». Телефон — логин, пароль передайте сотруднику сами."
+     },
+     {
+      "uz": "Parolni unutgan xodim uchun kartasini oching va yangi parol kiriting.",
+      "ru": "Если сотрудник забыл пароль, откройте его карточку и задайте новый."
+     },
+     {
+      "uz": "Bir kishi ikki vazifa bajarsa, «Qo'shimcha ruxsatlar»dan ikkinchi rolni belgilang.",
+      "ru": "Если сотрудник совмещает две должности, отметьте вторую роль в «Дополнительных правах»."
+     },
+     {
+      "uz": "Direktor akkauntini o'zgartirib bo'lmaydi — bu faqat direktor vakolati.",
+      "ru": "Аккаунт директора изменить нельзя — это право только директора."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "3. Xizmatlar va onlayn qabul",
+     "ru": "3. Услуги и онлайн-запись"
+    },
+    "steps": [
+     {
+      "uz": "Narx o'zgarsa «Xizmatlar va narxlar»da yangilang — yangi hisob-fakturalarga ta'sir qiladi, eskilariga emas.",
+      "ru": "При изменении цены обновите её в «Услугах и ценах» — это влияет на новые счета, не на старые."
+     },
+     {
+      "uz": "«Onlayn qabul»da qaysi xizmat va shifokorlar saytda ko'rinishini belgilang.",
+      "ru": "В «Онлайн-записи» отметьте, какие услуги и врачи видны на сайте."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "4. Bemorlar bazasi",
+     "ru": "4. База пациентов"
+    },
+    "steps": [
+     {
+      "uz": "Bir xil JSHSHIR bilan ikkinchi bemor qo'shib bo'lmaydi — tizim mavjud bemorni ko'rsatadi.",
+      "ru": "Нельзя добавить второго пациента с тем же ПИНФЛ — система покажет существующего."
+     },
+     {
+      "uz": "Bemor kartasida tarix, tahlillar, rasmlar va hisob-fakturalar bir joyda.",
+      "ru": "В карточке пациента — история, анализы, фото и счета в одном месте."
+     },
+     {
+      "uz": "Ma'lumotlarni Excel/CSV ga eksport qilish mumkin (obuna tugagan bo'lsa ham).",
+      "ru": "Данные можно экспортировать в Excel/CSV (даже если подписка закончилась)."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "5. Hisobot va kassa nazorati",
+     "ru": "5. Отчёты и контроль кассы"
+    },
+    "steps": [
+     {
+      "uz": "«Kunlik kassa»da kassir kunni yopganini tekshiring. Farq bo'lsa izohni o'qing.",
+      "ru": "В «Дневной кассе» проверьте, что кассир закрыл день. При расхождении прочитайте комментарий."
+     },
+     {
+      "uz": "Kerak bo'lsa oxirgi yopilgan kunni «Qayta ochish» orqali ochib tuzating.",
+      "ru": "При необходимости откройте последний закрытый день кнопкой «Открыть заново» и исправьте."
+     }
+    ],
+    "tip": null
+   }
+  ]
+ },
+ "receptionist": {
+  "icon": "clipboard",
+  "illu": "reception",
+  "roles": [
+   "receptionist"
+  ],
+  "title": {
+   "uz": "Qabulxona uchun yo'riqnoma",
+   "ru": "Руководство для регистратуры"
+  },
+  "intro": {
+   "uz": "Qabulxona bemorlarni ro'yxatga oladi, qabulga yozadi va navbatni boshqaradi.",
+   "ru": "Регистратура регистрирует пациентов, записывает на приём и управляет очередью."
+  },
+  "sections": [
+   {
+    "title": {
+     "uz": "1. Yangi bemor qo'shish",
+     "ru": "1. Добавление нового пациента"
+    },
+    "steps": [
+     {
+      "uz": "«Bemorlar» → «Yangi bemor».",
+      "ru": "«Пациенты» → «Новый пациент»."
+     },
+     {
+      "uz": "JSHSHIR yozing: xizmat yoqilgan bo'lsa F.I.Sh., tug'ilgan sana va jins o'zi to'ladi.",
+      "ru": "Введите ПИНФЛ: если сервис включён, Ф.И.О., дата рождения и пол заполнятся сами."
+     },
+     {
+      "uz": "Agar bemor allaqachon bazada bo'lsa, tizim «Bu bemor allaqachon kiritilgan» deb ko'rsatadi — yangisini yaratmang.",
+      "ru": "Если пациент уже в базе, система покажет «Этот пациент уже внесён» — не создавайте нового."
+     },
+     {
+      "uz": "Kerak bo'lsa bemorning rasmini yuklang (tizim sifatni saqlagan holda hajmini kamaytiradi).",
+      "ru": "При необходимости загрузите фото пациента (система уменьшит размер без потери качества)."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "2. Qabulga yozish",
+     "ru": "2. Запись на приём"
+    },
+    "steps": [
+     {
+      "uz": "«Qabul kalendari»da shifokor ustunidagi bo'sh katakni bosing — vaqt va shifokor avtomatik tanlanadi.",
+      "ru": "В «Календаре приёма» нажмите свободную ячейку в колонке врача — время и врач выберутся автоматически."
+     },
+     {
+      "uz": "Bemorni, xizmatni tanlang va saqlang. Bemorga SMS eslatma avtomatik ketadi (24 soat va 2 soat oldin), agar klinika SMS ulagan bo'lsa.",
+      "ru": "Выберите пациента и услугу и сохраните. Пациенту автоматически уйдёт SMS-напоминание (за 24 часа и за 2 часа), если у клиники подключены SMS."
+     },
+     {
+      "uz": "Vaqt band bo'lsa tizim ogohlantiradi.",
+      "ru": "Если время занято, система предупредит."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "3. Bemor kelganda",
+     "ru": "3. Когда пациент пришёл"
+    },
+    "steps": [
+     {
+      "uz": "«Qabullar» ro'yxatida bemor holatini «Keldi» ga o'zgartiring — shifokor uni ko'radi.",
+      "ru": "В списке «Приёмы» переведите статус пациента в «Пришёл» — врач его увидит."
+     },
+     {
+      "uz": "Kelmasa «Kelmadi» deb belgilang.",
+      "ru": "Если не пришёл — отметьте «Не пришёл»."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "4. Onlayn yozilgan bemorlar",
+     "ru": "4. Пациенты, записавшиеся онлайн"
+    },
+    "steps": [
+     {
+      "uz": "Onlayn yozilganlar qabullar ro'yxatida «onlayn» manbasi bilan chiqadi. Ular to'lovni allaqachon qilgan va navbat raqamini olgan.",
+      "ru": "Записавшиеся онлайн отображаются в списке приёмов с источником «онлайн». Они уже оплатили и получили номер очереди."
+     },
+     {
+      "uz": "Bunday bemorga qayta hisob-faktura chiqarmang — to'lov Payme orqali kelgan.",
+      "ru": "Не выставляйте таким пациентам повторный счёт — оплата пришла через Payme."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "5. Hisob-faktura va tahlil yo'llanmasi",
+     "ru": "5. Счёт и направление на анализ"
+    },
+    "steps": [
+     {
+      "uz": "«Hisob-fakturalar» → yangi: bemor va xizmatlarni tanlang. To'lovni kassir qabul qiladi.",
+      "ru": "«Счета» → новый: выберите пациента и услуги. Оплату принимает кассир."
+     },
+     {
+      "uz": "«Tahlillar» → «Tahlil yo'llanmasi» orqali laborantga buyurtma bering.",
+      "ru": "Через «Анализы» → «Направление на анализ» оформите заказ лаборанту."
+     }
+    ],
+    "tip": null
+   }
+  ]
+ },
+ "doctor": {
+  "icon": "stethoscope",
+  "illu": "doctor",
+  "roles": [
+   "doctor"
+  ],
+  "title": {
+   "uz": "Shifokor uchun yo'riqnoma",
+   "ru": "Руководство для врача"
+  },
+  "intro": {
+   "uz": "Shifokor faqat o'z bemorlarini ko'radi: qabul, tibbiy karta, retsept va tahlil yo'llanmasi.",
+   "ru": "Врач видит только своих пациентов: приём, медицинская карта, рецепт и направление на анализы."
+  },
+  "sections": [
+   {
+    "title": {
+     "uz": "1. Kun boshida",
+     "ru": "1. В начале дня"
+    },
+    "steps": [
+     {
+      "uz": "«Bosh sahifa»da bugungi qabullaringiz ro'yxati va navbat ko'rinadi.",
+      "ru": "На «Главной» виден список ваших записей на сегодня и очередь."
+     },
+     {
+      "uz": "«Qabul kalendari» haftalik jadvalingizni ko'rsatadi.",
+      "ru": "«Календарь приёма» показывает ваше недельное расписание."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "2. Qabul va tibbiy karta",
+     "ru": "2. Приём и медицинская карта"
+    },
+    "steps": [
+     {
+      "uz": "Bemor kelgach qabulni oching va «Tashrif» (tibbiy karta) yarating.",
+      "ru": "Когда пациент пришёл, откройте приём и создайте «Визит» (медицинскую карту)."
+     },
+     {
+      "uz": "Shikoyat, ko'rik natijasi, tashxis va tavsiyalarni to'ldiring.",
+      "ru": "Заполните жалобы, результаты осмотра, диагноз и рекомендации."
+     },
+     {
+      "uz": "Bemorning allergiyasi va surunkali kasalliklariga e'tibor bering — ular kartaning tepasida.",
+      "ru": "Обращайте внимание на аллергии и хронические заболевания пациента — они вверху карточки."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "3. Retsept va xulosa",
+     "ru": "3. Рецепт и заключение"
+    },
+    "steps": [
+     {
+      "uz": "«Retsept» bo'limiga dori nomi, dozasi va qabul qilish tartibini qo'shing.",
+      "ru": "В разделе «Рецепт» добавьте название препарата, дозировку и схему приёма."
+     },
+     {
+      "uz": "«Retseptni chop etish» va «Xulosani chop etish» tugmalari klinika blankasida hujjat tayyorlaydi; PDF qilib saqlash ham mumkin.",
+      "ru": "Кнопки «Печать рецепта» и «Печать заключения» формируют документ на бланке клиники; можно сохранить в PDF."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "4. Tahlillar",
+     "ru": "4. Анализы"
+    },
+    "steps": [
+     {
+      "uz": "«Tahlillar» → «Tahlil yo'llanmasi»: bemor va tahlil nomini kiriting.",
+      "ru": "«Анализы» → «Направление на анализ»: укажите пациента и название анализа."
+     },
+     {
+      "uz": "Natija tayyor bo'lgach holati «Tayyor»ga o'zgaradi — natijani shu bo'limda ko'rasiz.",
+      "ru": "Когда результат готов, статус меняется на «Готово» — результат видно в этом разделе."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "5. Hisob-faktura",
+     "ru": "5. Счёт"
+    },
+    "steps": [
+     {
+      "uz": "Qabul tugagach ko'rsatilgan xizmatlar bo'yicha hisob-faktura yaratiladi; to'lovni kassir qabul qiladi.",
+      "ru": "После приёма по оказанным услугам формируется счёт; оплату принимает кассир."
+     },
+     {
+      "uz": "Ish haqingiz foiz asosida bo'lsa, hisob-faktura sizga biriktirilgan bo'lishi kerak.",
+      "ru": "Если ваша зарплата процентная, счёт должен быть привязан к вам."
+     }
+    ],
+    "tip": null
+   }
+  ]
+ },
+ "cashier": {
+  "icon": "banknote",
+  "illu": "cashier",
+  "roles": [
+   "cashier"
+  ],
+  "title": {
+   "uz": "Kassir uchun yo'riqnoma",
+   "ru": "Руководство для кассира"
+  },
+  "intro": {
+   "uz": "Kassir to'lovlarni qabul qiladi, kunlik kassani yuritadi va kunni yopadi.",
+   "ru": "Кассир принимает платежи, ведёт дневную кассу и закрывает день."
+  },
+  "sections": [
+   {
+    "title": {
+     "uz": "1. To'lov qabul qilish",
+     "ru": "1. Приём оплаты"
+    },
+    "steps": [
+     {
+      "uz": "«Hisob-fakturalar» ro'yxatidan kerakli hisobni oching.",
+      "ru": "Откройте нужный счёт в списке «Счета»."
+     },
+     {
+      "uz": "«To'lov qabul qilish» formasida summa va usulni tanlang — naqd, karta, Payme, Click yoki bank o'tkazmasi.",
+      "ru": "В форме «Приём оплаты» выберите сумму и способ — наличные, карта, Payme, Click или банковский перевод."
+     },
+     {
+      "uz": "Qisman to'lov mumkin: qolgan summa hisobda ko'rinib turadi.",
+      "ru": "Возможна частичная оплата: остаток виден в счёте."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "2. Kunlik kassa",
+     "ru": "2. Дневная касса"
+    },
+    "steps": [
+     {
+      "uz": "«Kunlik kassa» sahifasida kun bo'yicha barcha to'lovlar, usullar bo'yicha summalar va kassirlar bo'yicha taqsimot ko'rinadi.",
+      "ru": "На странице «Дневная касса» видны все платежи за день, суммы по способам оплаты и распределение по кассирам."
+     },
+     {
+      "uz": "Kun boshidagi qoldiq avvalgi yopilgan kundan avtomatik olinadi.",
+      "ru": "Остаток на начало дня берётся автоматически с предыдущего закрытого дня."
+     },
+     {
+      "uz": "«Kassada bo'lishi kerak» — faqat naqd pul hisobi. Karta va Payme tushumi bankka tushadi va naqd hisobga kirmaydi.",
+      "ru": "«Должно быть в кассе» — только учёт наличных. Поступления по карте и Payme идут в банк и в наличные не входят."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "3. Xarajat va kirim",
+     "ru": "3. Расходы и приход"
+    },
+    "steps": [
+     {
+      "uz": "«Xarajat / kirim qo'shish» formasida chiqim yoki kirimni turi, usuli, summasi va izohi bilan yozing (masalan, suv, tozalash vositalari).",
+      "ru": "В форме «Добавить расход / приход» запишите расход или приход с типом, способом, суммой и комментарием (например, вода, моющие средства)."
+     },
+     {
+      "uz": "Ish haqi va avans chiqimlari «Ish haqi» bo'limidan avtomatik tushadi.",
+      "ru": "Расходы по зарплате и авансам попадают автоматически из раздела «Зарплата»."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "4. Kunni yopish",
+     "ru": "4. Закрытие дня"
+    },
+    "steps": [
+     {
+      "uz": "Kun oxirida kassadagi naqd pulni sanang va «Kunni yopish» formasiga kiriting.",
+      "ru": "В конце дня пересчитайте наличные в кассе и введите сумму в форму «Закрыть день»."
+     },
+     {
+      "uz": "Tizim kutilgan summa bilan farqni hisoblaydi. Farq bo'lsa izoh yozing.",
+      "ru": "Система посчитает разницу с ожидаемой суммой. Если есть расхождение — напишите комментарий."
+     },
+     {
+      "uz": "Yopilgan kunga o'zgartirish kiritib bo'lmaydi. Qayta ochishni admin/direktor qiladi.",
+      "ru": "В закрытый день изменения вносить нельзя. Заново открыть может админ/директор."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "5. Hisobotni chop etish",
+     "ru": "5. Печать отчёта"
+    },
+    "steps": [
+     {
+      "uz": "«Chop etish» tugmasi kunlik kassa hisobotini A4 formatda tayyorlaydi (PDF qilib saqlash mumkin).",
+      "ru": "Кнопка «Печать» готовит отчёт дневной кассы в формате A4 (можно сохранить в PDF)."
+     }
+    ],
+    "tip": null
+   }
+  ]
+ },
+ "laborant": {
+  "icon": "flask",
+  "illu": "lab",
+  "roles": [
+   "laborant"
+  ],
+  "title": {
+   "uz": "Laborant uchun yo'riqnoma",
+   "ru": "Руководство для лаборанта"
+  },
+  "intro": {
+   "uz": "Laborant tahlil buyurtmalarini ko'radi, natijalarni kiritadi va bemorga xabar beradi.",
+   "ru": "Лаборант видит заказы на анализы, вносит результаты и уведомляет пациента."
+  },
+  "sections": [
+   {
+    "title": {
+     "uz": "1. Buyurtmalarni ko'rish",
+     "ru": "1. Просмотр заказов"
+    },
+    "steps": [
+     {
+      "uz": "«Tahlillar» sahifasida barcha buyurtmalar ro'yxati chiqadi.",
+      "ru": "На странице «Анализы» отображается список всех заказов."
+     },
+     {
+      "uz": "Filtrdan «Kutilmoqda»ni tanlab, natijasi kiritilmaganlarini ajrating.",
+      "ru": "Выберите фильтр «Ожидается», чтобы выделить заказы без результата."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "2. Natija kiritish",
+     "ru": "2. Ввод результата"
+    },
+    "steps": [
+     {
+      "uz": "«Natija kiritish» tugmasini bosing.",
+      "ru": "Нажмите «Ввести результат»."
+     },
+     {
+      "uz": "Natija qiymati, me'yor (norma) va izohni yozing; kerak bo'lsa PDF yoki rasm faylni (5 MB gacha) biriktiring.",
+      "ru": "Введите значение результата, норму и комментарий; при необходимости прикрепите PDF или изображение (до 5 МБ)."
+     },
+     {
+      "uz": "«Natija tayyor bo'lganda bemorga SMS yuborish» belgisi yoqilsa, natija tayyorligi haqida bemorga xabar ketadi.",
+      "ru": "Если включена отметка «Отправить SMS пациенту при готовности результата», пациенту уйдёт уведомление о готовности результата."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "3. Xatoni tuzatish",
+     "ru": "3. Исправление ошибки"
+    },
+    "steps": [
+     {
+      "uz": "Kiritilgan natijani «Ko'rish/tahrir» orqali o'zgartirish mumkin.",
+      "ru": "Введённый результат можно изменить через «Просмотр/правка»."
+     },
+     {
+      "uz": "Tahlilni o'chirish faqat direktorga ruxsat etilgan — xato buyurtma bo'lsa direktorga ayting.",
+      "ru": "Удалять анализ может только директор — при ошибочном заказе сообщите директору."
+     }
+    ],
+    "tip": null
+   },
+   {
+    "title": {
+     "uz": "4. Maxfiylik",
+     "ru": "4. Конфиденциальность"
+    },
+    "steps": [
+     {
+      "uz": "Bemor ma'lumotlari va natijalarini uchinchi shaxslarga bermang.",
+      "ru": "Не передавайте данные и результаты пациентов третьим лицам."
+     },
+     {
+      "uz": "Ish tugagach tizimdan «Chiqish» tugmasi orqali chiqing.",
+      "ru": "По окончании работы выходите из системы кнопкой «Выход»."
+     }
+    ],
+    "tip": null
+   }
+  ]
+ }
+}

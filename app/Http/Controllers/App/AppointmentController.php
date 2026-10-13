@@ -22,7 +22,7 @@ class AppointmentController extends Controller
         } catch (\Throwable $e) {
             $date = today();
         }
-        $doctorId = $user->role === 'doctor' ? $user->id : $r->query('doctor_id');
+        $doctorId = $user->isScopedDoctor() ? $user->id : $r->query('doctor_id');
 
         $items = Appointment::with(['patient', 'doctor', 'service'])
             ->whereDate('starts_at', $date)
@@ -42,7 +42,7 @@ class AppointmentController extends Controller
         return view('app.appointments.form', [
             'appointment' => new Appointment([
                 'starts_at' => $this->queryTime($r) ?? now()->addHour()->minute(0)->second(0),
-                'doctor_id' => $r->user()->role === 'doctor' ? $r->user()->id : ($r->query('doctor_id') ?: null),
+                'doctor_id' => $r->user()->isScopedDoctor() ? $r->user()->id : ($r->query('doctor_id') ?: null),
             ]),
             'patient' => $patient,
             'doctors' => User::clinicDoctors()->get(),
@@ -101,11 +101,10 @@ class AppointmentController extends Controller
 
         if ($r->boolean('send_sms')) {
             $p = $a->patient;
-            $clinicName = view()->shared('clinic')?->name ?? BillingService::appName();
             if ($p && $p->phone) {
-                SmsService::send($p->phone, __('Hurmatli :name, :date da :clinic klinikasiga qabulingiz bor.', [
-                    'name' => $p->first_name, 'date' => $a->starts_at->format('d.m.Y H:i'), 'clinic' => $clinicName,
-                ]), $a->clinic_id, true);
+                SmsService::event($a->clinic_id, 'appt_created', $p->phone, [
+                    'name' => $p->first_name, 'date' => $a->starts_at->format('d.m.Y H:i'), 'doctor' => $a->doctor?->name ?? '',
+                ]);
             }
         }
 
@@ -136,7 +135,7 @@ class AppointmentController extends Controller
     public function status(Request $r, Appointment $appointment)
     {
         $d = $r->validate(['status' => 'required|in:'.implode(',', array_keys(Appointment::statuses()))]);
-        if ($r->user()->role === 'doctor') {
+        if ($r->user()->isScopedDoctor()) {
             abort_unless($appointment->doctor_id === $r->user()->id, 403);
         }
         $appointment->update(['status' => $d['status']]);

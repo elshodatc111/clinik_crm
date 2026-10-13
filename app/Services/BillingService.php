@@ -24,6 +24,7 @@ class BillingService
     public const TENANT_TABLES = [
         'lab_orders', 'payments', 'invoice_items', 'invoices', 'prescriptions', 'visits',
         'appointments', 'services', 'patients', 'balance_transactions', 'topup_orders', 'clinic_status_logs',
+        'credit_applications', 'patient_photos', 'payrolls', 'payroll_adjustments', 'cash_movements', 'cash_closings', 'online_bookings', 'pinfl_lookups',
     ];
 
     public static function appName(): string

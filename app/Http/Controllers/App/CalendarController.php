@@ -24,10 +24,10 @@ class CalendarController extends Controller
         }
         $view = $r->query('view') === 'week' ? 'week' : 'day';
         $doctors = User::clinicDoctors()->get();
-        if ($user->role === 'doctor') {
+        if ($user->isScopedDoctor()) {
             $doctors = $doctors->where('id', $user->id)->values();
         }
-        $doctorId = $user->role === 'doctor' ? $user->id : ($r->query('doctor_id') ?: $doctors->first()?->id);
+        $doctorId = $user->isScopedDoctor() ? $user->id : ($r->query('doctor_id') ?: $doctors->first()?->id);
 
         if ($view === 'week') {
             $from = $date->copy()->startOfWeek();
@@ -42,7 +42,7 @@ class CalendarController extends Controller
             ->where('starts_at', '>=', $range[0])->where('starts_at', '<', $range[1])
             ->whereNotIn('status', ['canceled'])
             ->when($view === 'week', fn ($q) => $q->where('doctor_id', $doctorId))
-            ->when($view === 'day' && $user->role === 'doctor', fn ($q) => $q->where('doctor_id', $user->id))
+            ->when($view === 'day' && $user->isScopedDoctor(), fn ($q) => $q->where('doctor_id', $user->id))
             ->orderBy('starts_at')->get();
 
         // Ustunlar: kun ko'rinishida — shifokorlar, hafta ko'rinishida — kunlar

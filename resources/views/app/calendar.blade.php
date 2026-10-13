@@ -29,7 +29,7 @@
         </span>
     </div>
     <div class="flex items-center gap-2">
-        @if($view === 'week' && $u->role !== 'doctor')
+        @if($view === 'week' && ! $u->isScopedDoctor())
             <form method="GET"><input type="hidden" name="view" value="week"><input type="hidden" name="date" value="{{ $date->toDateString() }}">
                 <select name="doctor_id" class="input !py-1.5" onchange="this.form.submit()">@foreach($doctors as $d)<option value="{{ $d->id }}" @selected((string) $doctorId === (string) $d->id)>{{ $d->name }}</option>@endforeach</select></form>
         @endif
@@ -67,7 +67,9 @@
                 <div class="flex-1 min-w-[150px] relative border-l border-slate-100 {{ $c['today'] ? 'bg-brand-soft' : '' }}" style="height: {{ $height }}px">
                     {{-- bo'sh katak: bosilsa shu vaqtga qabul yozish --}}
                     @for($m = 0; $m < ($endHour - $startHour) * 60; $m += 30)
-                        @php($slot = $c['date']->copy()->setTime($startHour, 0)->addMinutes($m))
+                        @php
+                            $slot = $c['date']->copy()->setTime($startHour, 0)->addMinutes($m);
+                        @endphp
                         <a href="{{ route('app.appointments.create', ['starts_at' => $slot->format('Y-m-d\TH:i'), 'doctor_id' => $c['doctor_id']]) }}"
                            class="absolute inset-x-0 border-t {{ $m % 60 === 0 ? 'border-slate-200' : 'border-dashed border-slate-100' }} slot"
                            style="top: {{ $m * $ppm }}px; height: {{ 30 * $ppm }}px" title="{{ $slot->format('H:i') }} — {{ __('Qabulga yozish') }}"></a>

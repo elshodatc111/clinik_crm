@@ -32,9 +32,15 @@ class AppServiceProvider extends ServiceProvider
                         'logo' => $logo ? Storage::disk('public')->url($logo) : null,
                         'phone' => Setting::get('support_phone'),
                         'email' => Setting::get('support_email'),
+                        'contact' => [
+                            'phone' => Setting::get('support_phone'), 'phone2' => Setting::get('support_phone2'), 'email' => Setting::get('support_email'),
+                            'address' => Setting::get('contact_address'), 'hours' => Setting::get('contact_hours'),
+                            'telegram' => Setting::get('contact_telegram'), 'instagram' => Setting::get('contact_instagram'),
+                            'map' => Setting::get('contact_map_url'),
+                        ],
                     ];
                 } catch (\Throwable $e) {
-                    $brand = ['name' => 'Klinika CRM', 'color' => '#1d4ed8', 'dark' => '#1e40af', 'logo' => null, 'phone' => null, 'email' => null];
+                    $brand = ['name' => 'Klinika CRM', 'color' => '#1d4ed8', 'dark' => '#1e40af', 'logo' => null, 'phone' => null, 'email' => null, 'contact' => []];
                 }
             }
             $view->with('brand', $brand);

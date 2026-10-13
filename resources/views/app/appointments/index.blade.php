@@ -7,7 +7,7 @@
         <a class="btn btn-sm" href="{{ route('app.appointments.index', ['date' => $date->copy()->subDay()->toDateString(), 'doctor_id' => $doctorId]) }}">←</a>
         <form method="GET" class="flex gap-2 items-center">
             <input type="date" name="date" value="{{ $date->toDateString() }}" class="input" onchange="this.form.submit()">
-            @if($u->role !== 'doctor')
+            @if(! $u->isScopedDoctor())
                 <select name="doctor_id" class="input" onchange="this.form.submit()"><option value="">{{ __('Barcha shifokorlar') }}</option>@foreach($doctors as $d)<option value="{{ $d->id }}" @selected((string) $doctorId === (string) $d->id)>{{ $d->name }}</option>@endforeach</select>
             @endif
         </form>

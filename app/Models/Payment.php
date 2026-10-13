@@ -19,6 +19,17 @@ class Payment extends Model
         return $this->belongsTo(Invoice::class);
     }
 
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class)->withTrashed();
+    }
+
+    /** Bemorga ko'rsatiladigan egasi: hisob-faktura bemori yoki avans bemori. */
+    public function ownerPatient(): ?Patient
+    {
+        return $this->invoice?->patient ?? $this->patient;
+    }
+
     public function cashier()
     {
         return $this->belongsTo(User::class, 'cashier_id');

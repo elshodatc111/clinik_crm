@@ -58,7 +58,7 @@ class PaymeService
 
     protected function authorized(Request $request): bool
     {
-        $key = Setting::get('payme_test_mode') ? Setting::get('payme_test_key') : Setting::get('payme_key');
+        $key = $this->secret();
         if (! $key) {
             return false;
         }
@@ -71,22 +71,97 @@ class PaymeService
         return hash_equals('Paycom:'.$key, $decoded);
     }
 
+    /** Basic auth paroli (kalit). Platforma uchun — super admin sozlamalari. */
+    protected function secret(): ?string
+    {
+        return Setting::get('payme_test_mode') ? Setting::get('payme_test_key') : Setting::get('payme_key');
+    }
+
+    protected function type(): string
+    {
+        return 'topup';
+    }
+
+    /** To'lov buyurtmasi (account.order_id bo'yicha). */
+    protected function findOrder(int $id): ?object
+    {
+        return TopupOrder::find($id);
+    }
+
+    protected function payable(object $order): bool
+    {
+        return $order->status === 'new';
+    }
+
+    protected function amountSom(object $order): int
+    {
+        return (int) $order->amount;
+    }
+
+    /** Muvaffaqiyatli to'lovdan keyin buyurtmani bajarish (DB tranzaksiya ichida). */
+    protected function fulfill(PaymeTransaction $tx, object $order): void
+    {
+        $order->update(['status' => 'paid']);
+        $clinic = Clinic::find($tx->clinic_id);
+        if ($clinic) {
+            BillingService::adjust($clinic, (int) $order->amount, 'topup', "Payme to'lovi (#{$tx->payme_id})");
+        }
+    }
+
+    /** Tranzaksiya tugagandan so'ng (DB tranzaksiyadan tashqarida). */
+    protected function afterFulfill(PaymeTransaction $tx, object $order): void
+    {
+        $clinic = Clinic::find($tx->clinic_id);
+        if ($clinic) {
+            BillingService::afterTopup($clinic);
+        }
+    }
+
+    /** Bajarilgan to'lovni bekor qilish. Mumkin bo'lmasa -31007 tashlaydi. */
+    protected function refund(PaymeTransaction $tx, object $order, $reason): void
+    {
+        $clinic = Clinic::find($tx->clinic_id);
+        if (! $clinic || $clinic->balance < (int) $order->amount) {
+            throw PaymeException::make(-31007, 'Buyurtma bajarilgan, bekor qilib bo\'lmaydi', 'Заказ выполнен, отмена невозможна', 'Order completed, cannot cancel');
+        }
+        BillingService::adjust($clinic, -((int) $order->amount), 'refund', "Payme to'lovi bekor qilindi (#{$tx->payme_id})");
+        $order->update(['status' => 'canceled']);
+    }
+
+    protected function onCanceledUnpaid(PaymeTransaction $tx): void
+    {
+    }
+
+    protected function onCreated(PaymeTransaction $tx, object $order): void
+    {
+    }
+
     protected function nowMs(): int
     {
         return (int) round(microtime(true) * 1000);
     }
 
-    protected function order(array $params): TopupOrder
+    protected function order(array $params): object
     {
-        $order = TopupOrder::find($params['account']['order_id'] ?? 0);
+        $order = $this->findOrder((int) ($params['account']['order_id'] ?? 0));
         if (! $order) {
             throw PaymeException::make(-31050, 'Buyurtma topilmadi', 'Заказ не найден', 'Order not found', 'order_id');
         }
-        if ($order->status !== 'new') {
+        if (! $this->payable($order)) {
             throw PaymeException::make(-31051, 'Buyurtma to\'lash uchun yaroqsiz', 'Заказ недоступен для оплаты', 'Order is not payable', 'order_id');
         }
-        if ((int) ($params['amount'] ?? 0) !== (int) $order->amount * 100) {
+        if ((int) ($params['amount'] ?? 0) !== $this->amountSom($order) * 100) {
             throw PaymeException::make(-31001, 'Noto\'g\'ri summa', 'Неверная сумма', 'Wrong amount');
+        }
+
+        return $order;
+    }
+
+    protected function findOrderForTx(PaymeTransaction $tx): object
+    {
+        $order = $this->findOrder((int) $tx->topup_order_id);
+        if (! $order) {
+            throw PaymeException::make(-31050, 'Buyurtma topilmadi', 'Заказ не найден', 'Order not found', 'order_id');
         }
 
         return $order;
@@ -94,7 +169,7 @@ class PaymeService
 
     protected function tx(array $params): PaymeTransaction
     {
-        $tx = PaymeTransaction::where('payme_id', $params['id'] ?? '')->first();
+        $tx = PaymeTransaction::where('payme_id', $params['id'] ?? '')->where('order_type', $this->type())->first();
         if (! $tx) {
             throw PaymeException::make(-31003, 'Tranzaksiya topilmadi', 'Транзакция не найдена', 'Transaction not found');
         }
@@ -121,7 +196,7 @@ class PaymeService
 
     protected function create(array $params): array
     {
-        $tx = PaymeTransaction::where('payme_id', $params['id'] ?? '')->first();
+        $tx = PaymeTransaction::where('payme_id', $params['id'] ?? '')->where('order_type', $this->type())->first();
         if ($tx) {
             if ($tx->state !== 1) {
                 throw $this->cannotPerform();
@@ -135,7 +210,7 @@ class PaymeService
         }
 
         $order = $this->order($params);
-        $busy = PaymeTransaction::where('topup_order_id', $order->id)->whereIn('state', [1, 2])->exists();
+        $busy = PaymeTransaction::where('order_type', $this->type())->where('topup_order_id', $order->id)->whereIn('state', [1, 2])->exists();
         if ($busy) {
             throw PaymeException::make(-31099, 'Buyurtma band', 'Заказ занят другой транзакцией', 'Order has another transaction', 'order_id');
         }
@@ -145,11 +220,13 @@ class PaymeService
             'payme_id' => $params['id'],
             'topup_order_id' => $order->id,
             'clinic_id' => $order->clinic_id,
+            'order_type' => $this->type(),
             'amount' => (int) $params['amount'],
             'state' => 1,
             'payme_time' => (int) ($params['time'] ?? $now),
             'create_time' => $now,
         ]);
+        $this->onCreated($tx, $order);
 
         return ['create_time' => $now, 'transaction' => (string) $tx->id, 'state' => 1];
     }
@@ -169,19 +246,12 @@ class PaymeService
             throw $this->cannotPerform();
         }
 
-        $clinic = null;
-        DB::transaction(function () use ($tx, &$clinic) {
+        $order = $this->findOrderForTx($tx);
+        DB::transaction(function () use ($tx, $order) {
             $tx->update(['state' => 2, 'perform_time' => $this->nowMs()]);
-            $order = TopupOrder::find($tx->topup_order_id);
-            $order->update(['status' => 'paid']);
-            $clinic = Clinic::find($tx->clinic_id);
-            if ($clinic) {
-                BillingService::adjust($clinic, (int) $order->amount, 'topup', "Payme to'lovi (#{$tx->payme_id})");
-            }
+            $this->fulfill($tx, $order);
         });
-        if ($clinic) {
-            BillingService::afterTopup($clinic);
-        }
+        $this->afterFulfill($tx, $order);
 
         return ['transaction' => (string) $tx->id, 'perform_time' => (int) $tx->perform_time, 'state' => 2];
     }
@@ -193,15 +263,11 @@ class PaymeService
 
         if ($tx->state === 1) {
             $tx->update(['state' => -1, 'reason' => $reason, 'cancel_time' => $this->nowMs()]);
+            $this->onCanceledUnpaid($tx);
         } elseif ($tx->state === 2) {
-            $clinic = Clinic::find($tx->clinic_id);
-            $order = TopupOrder::find($tx->topup_order_id);
-            if (! $clinic || $clinic->balance < (int) $order->amount) {
-                throw PaymeException::make(-31007, 'Buyurtma bajarilgan, bekor qilib bo\'lmaydi', 'Заказ выполнен, отмена невозможна', 'Order completed, cannot cancel');
-            }
-            DB::transaction(function () use ($tx, $clinic, $order, $reason) {
-                BillingService::adjust($clinic, -((int) $order->amount), 'refund', "Payme to'lovi bekor qilindi (#{$tx->payme_id})");
-                $order->update(['status' => 'canceled']);
+            $order = $this->findOrderForTx($tx);
+            DB::transaction(function () use ($tx, $order, $reason) {
+                $this->refund($tx, $order, $reason);
                 $tx->update(['state' => -2, 'reason' => $reason, 'cancel_time' => $this->nowMs()]);
             });
         }
@@ -225,9 +291,14 @@ class PaymeService
         ];
     }
 
+    protected function statementQuery()
+    {
+        return PaymeTransaction::where('order_type', $this->type());
+    }
+
     protected function statement(array $params): array
     {
-        $rows = PaymeTransaction::whereBetween('payme_time', [(int) ($params['from'] ?? 0), (int) ($params['to'] ?? 0)])
+        $rows = $this->statementQuery()->whereBetween('payme_time', [(int) ($params['from'] ?? 0), (int) ($params['to'] ?? 0)])
             ->orderBy('payme_time')->get();
 
         return ['transactions' => $rows->map(fn ($t) => [

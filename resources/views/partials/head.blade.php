@@ -1,6 +1,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<link rel="manifest" href="{{ route('pwa.manifest') }}">
+<meta name="theme-color" content="{{ $brand['color'] }}">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="{{ $brand['name'] }}"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<script>
+window.__pwa = { e: null };
+addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__pwa.e = e; dispatchEvent(new Event('pwa-ready')); });
+addEventListener('appinstalled', function () { window.__pwa.e = null; dispatchEvent(new Event('pwa-installed')); });
+if ('serviceWorker' in navigator) { addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () {}); }); }
+</script>
 <script>
 (function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');}catch(e){}})();
 window.toggleTheme=function(){var d=document.documentElement.classList.toggle('dark');try{localStorage.setItem('theme',d?'dark':'light');}catch(e){}if(window.Chart){location.reload();}};
@@ -18,6 +30,41 @@ body{font-family:'Inter',ui-sans-serif,system-ui,sans-serif;background:#f4f6fb}
 .input:focus{border-color:var(--brand);box-shadow:0 0 0 4px var(--brand-ring);outline:none}
 .nav-active{background:var(--brand);color:#fff;box-shadow:0 6px 16px -6px var(--brand)}
 .text-brand-soft{color:var(--brand)} .bg-brand-soft{background:var(--brand-soft)}
+/* ---------- Zamonaviy ko'rinish (polish) ---------- */
+body{background:radial-gradient(1200px 500px at 90% -10%,color-mix(in srgb,var(--brand) 7%,transparent),transparent 60%),#f4f6fb;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:color-mix(in srgb,var(--brand) 22%,white)}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:.5rem}
+input:focus-visible,textarea:focus-visible,select:focus-visible{outline:none}
+*{scrollbar-width:thin;scrollbar-color:#cbd5e1 transparent}
+.dark *{scrollbar-color:#2a3a5e transparent}
+body .card{border-radius:1.1rem;box-shadow:0 1px 2px rgba(15,23,42,.04),0 6px 20px -10px rgba(15,23,42,.10);transition:box-shadow .2s,transform .2s,border-color .2s}
+body a.card:hover{box-shadow:0 10px 30px -12px rgba(15,23,42,.22)}
+.dark body .card,.dark body a.card:hover{box-shadow:none}
+body .input{border-radius:.8rem;box-shadow:inset 0 1px 1px rgba(15,23,42,.03)}
+body .btn{border-radius:.8rem;transition:background .15s,box-shadow .15s,transform .05s,border-color .15s}
+body .btn:active{transform:translateY(1px)}
+body .btn-primary{background-image:linear-gradient(180deg,color-mix(in srgb,var(--brand) 88%,white),var(--brand));box-shadow:0 6px 16px -8px var(--brand),inset 0 1px 0 rgba(255,255,255,.18)}
+body .btn-primary:hover{background-image:linear-gradient(180deg,var(--brand),var(--brand-dark))}
+body .btn-sm{border-radius:.65rem}
+body .badge{letter-spacing:.01em}
+body .section-title{background:linear-gradient(180deg,rgba(248,250,252,.9),rgba(255,255,255,0));font-size:.95rem}
+.dark body .section-title{background:none}
+header.sticky{background:rgba(255,255,255,.72)!important;backdrop-filter:saturate(180%) blur(16px);-webkit-backdrop-filter:saturate(180%) blur(16px)}
+.dark header.sticky{background:rgba(10,16,32,.72)!important}
+aside.bg-slate-900{background:linear-gradient(185deg,#0f172a 0%,#101a33 55%,#0c1427 100%)}
+aside nav a{position:relative}
+aside nav a:not(.nav-active):hover{transform:translateX(2px)}
+aside nav a{transition:background .15s,color .15s,transform .15s}
+.nav-active{background-image:linear-gradient(135deg,var(--brand),var(--brand-dark));box-shadow:0 8px 20px -8px var(--brand),inset 0 1px 0 rgba(255,255,255,.2)}
+main{animation:kfade .35s ease both}
+@keyframes kfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+body table .td{transition:background .12s}
+body .th{letter-spacing:.06em}
+.hero-grad{background-image:radial-gradient(600px 220px at 85% 0%,rgba(255,255,255,.18),transparent 60%),linear-gradient(135deg,var(--brand) 0%,var(--brand-dark) 100%)}
+.line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:767px){main{padding-bottom:5rem}.card{border-radius:1rem}}
+@media print{aside,header,.no-print,[data-html2canvas-ignore]{display:none!important} main{padding:0!important} body{background:#fff!important} .card{box-shadow:none!important;border:0!important}}
 .slot:hover{background:var(--brand-soft)}
 .hero-grad{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-dark) 100%)}
 

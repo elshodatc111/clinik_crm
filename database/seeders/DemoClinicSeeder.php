@@ -39,7 +39,8 @@ class DemoClinicSeeder extends Seeder
             'email' => 'demo@klinika.local', 'address' => "Toshkent sh., Chilonzor tumani, Bunyodkor ko'chasi 12",
             'status' => Clinic::ACTIVE, 'plan_id' => $plan?->id, 'balance' => 1500000,
             'setup_paid_at' => now()->subDays(20), 'paid_until' => now()->addDays(10),
-            'settings' => ['working_hours' => '09:00 - 18:00'],
+            'slug' => 'demo-klinika',
+            'settings' => ['working_hours' => '09:00 - 18:00', 'online_enabled' => true, 'online_start' => '09:00', 'online_end' => '18:00', 'online_days' => [1, 2, 3, 4, 5, 6], 'online_days_ahead' => 30],
         ]);
         $cid = $clinic->id;
 
@@ -49,15 +50,16 @@ class DemoClinicSeeder extends Seeder
             'email' => $extra['email'] ?? null, 'password' => 'demo12345', 'is_active' => true,
             'phone_verified_at' => now(),
         ] + $extra);
-        $mk('Aziz Karimov', '998901112233', User::ADMIN, ['email' => 'demo@klinika.local']);
-        $mk('Madina Yusupova', '998901112244', User::RECEPTION);
-        $mk('Sherzod Aliyev', '998901112255', User::CASHIER);
-        $mk('Nilufar Rahimova', '998901112266', User::LAB);
+        $mk('Aziz Karimov', '998901112233', User::ADMIN, ['email' => 'demo@klinika.local', 'position' => 'director']);
+        $mk('Malika Rahimova', '998901112211', User::ADMIN, ['position' => 'admin']);
+        $mk('Madina Yusupova', '998901112244', User::RECEPTION, ['pay_type' => 'monthly', 'pay_base' => 3000000]);
+        $mk('Sherzod Aliyev', '998901112255', User::CASHIER, ['pay_type' => 'daily', 'pay_base' => 120000, 'extra_roles' => ['receptionist']]);
+        $mk('Nilufar Rahimova', '998901112266', User::LAB, ['pay_type' => 'mixed', 'pay_base' => 2000000, 'pay_percent' => 5, 'pay_scope' => 'clinic']);
         $doctors = [
-            $mk('Dr. Bobur Tursunov', '998901112277', User::DOCTOR, ['specialty' => 'Terapevt', 'room' => '101', 'percent' => 30]),
-            $mk('Dr. Dilnoza Saidova', '998901112288', User::DOCTOR, ['specialty' => 'Kardiolog', 'room' => '102', 'percent' => 35]),
-            $mk('Dr. Jasur Ergashev', '998901112299', User::DOCTOR, ['specialty' => 'Nevrolog', 'room' => '201', 'percent' => 30]),
-            $mk('Dr. Gulnora Mirzayeva', '998901112200', User::DOCTOR, ['specialty' => 'LOR', 'room' => '202', 'percent' => 30]),
+            $mk('Dr. Bobur Tursunov', '998901112277', User::DOCTOR, ['specialty' => 'Terapevt', 'room' => '101', 'percent' => 30, 'pay_type' => 'percent', 'pay_percent' => 30, 'pay_scope' => 'own', 'online_enabled' => true]),
+            $mk('Dr. Dilnoza Saidova', '998901112288', User::DOCTOR, ['specialty' => 'Kardiolog', 'room' => '102', 'percent' => 35, 'pay_type' => 'percent', 'pay_percent' => 35, 'pay_scope' => 'own', 'online_enabled' => true]),
+            $mk('Dr. Jasur Ergashev', '998901112299', User::DOCTOR, ['specialty' => 'Nevrolog', 'room' => '201', 'percent' => 30, 'pay_type' => 'percent', 'pay_percent' => 30, 'pay_scope' => 'own', 'online_enabled' => true]),
+            $mk('Dr. Gulnora Mirzayeva', '998901112200', User::DOCTOR, ['specialty' => 'LOR', 'room' => '202', 'percent' => 30, 'pay_type' => 'percent', 'pay_percent' => 30, 'pay_scope' => 'own', 'online_enabled' => true]),
         ];
 
         // ---------- Xizmatlar ----------
@@ -71,7 +73,7 @@ class DemoClinicSeeder extends Seeder
             ['Qand miqdori', 'Laboratoriya', 30000, 10], ['Inyeksiya (ukol)', 'Muolaja', 20000, 15],
             ['Tomchilatib dori yuborish', 'Muolaja', 80000, 60], ['Massaj', 'Fizioterapiya', 100000, 40],
         ] as [$n, $g, $p, $d]) {
-            $services[] = Service::create(['clinic_id' => $cid, 'name' => $n, 'group' => $g, 'price' => $p, 'duration_min' => $d, 'is_active' => true]);
+            $services[] = Service::create(['clinic_id' => $cid, 'name' => $n, 'group' => $g, 'price' => $p, 'duration_min' => $d, 'is_active' => true, 'online_enabled' => true]);
         }
         $consults = array_slice($services, 0, 4);
 
@@ -200,16 +202,24 @@ class DemoClinicSeeder extends Seeder
             }
         }
 
+        // ---------- Kassa xarajatlari ----------
+        foreach ([['Suv va choy', 60000], ['Tozalash vositalari', 140000], ['Printer qog\'ozi', 85000], ['Internet to\'lovi', 250000], ['Dori-darmon (birinchi yordam)', 190000]] as $i => [$note, $amt]) {
+            DB::table('cash_movements')->insert([
+                'clinic_id' => $cid, 'date' => now()->subDays($i)->toDateString(), 'direction' => 'out', 'category' => 'expense',
+                'method' => 'cash', 'amount' => $amt, 'note' => $note, 'created_by' => null, 'created_at' => now(), 'updated_at' => now(),
+            ]);
+        }
+
         $this->command?->info("Demo klinika tayyor: {$apptCount} qabul, ".count($patients).' bemor.');
         $this->command?->info('Kirish: telefon 998901112233 (direktor), parol: demo12345');
-        $this->command?->info('Boshqa rollar: 998901112244 (qabulxona), ...55 (kassir), ...66 (laborant), ...77/88/99/00 (shifokorlar) — parol bir xil.');
+        $this->command?->info('Boshqa rollar: 998901112244 (qabulxona), ...11 (admin), ...55 (kassir + qabulxona ruxsati), ...66 (laborant), ...77/88/99/00 (shifokorlar) — parol bir xil.');
     }
 
     protected function cleanup(): void
     {
         $old = Clinic::where('name', self::NAME)->get();
         foreach ($old as $c) {
-            foreach (['lab_orders', 'payments', 'invoice_items', 'invoices', 'prescriptions', 'visits', 'appointments', 'services', 'patients', 'audit_logs', 'sms_logs'] as $t) {
+            foreach (['lab_orders', 'payments', 'invoice_items', 'invoices', 'prescriptions', 'visits', 'appointments', 'services', 'patients', 'audit_logs', 'sms_logs', 'payrolls', 'payroll_adjustments', 'cash_movements', 'cash_closings', 'online_bookings', 'pinfl_lookups', 'credit_applications', 'patient_photos'] as $t) {
                 DB::table($t)->where('clinic_id', $c->id)->delete();
             }
             DB::table('users')->where('clinic_id', $c->id)->delete();
@@ -218,6 +228,6 @@ class DemoClinicSeeder extends Seeder
             DB::table('clinics')->where('id', $c->id)->delete();
         }
         // Telefon raqamlari band bo'lib qolmasin
-        DB::table('users')->whereIn('phone', ['998901112233', '998901112244', '998901112255', '998901112266', '998901112277', '998901112288', '998901112299', '998901112200'])->delete();
+        DB::table('users')->whereIn('phone', ['998901112233', '998901112244', '998901112255', '998901112266', '998901112277', '998901112288', '998901112299', '998901112200', '998901112211'])->delete();
     }
 }

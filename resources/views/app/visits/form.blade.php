@@ -20,7 +20,7 @@
         <input type="hidden" name="appointment_id" value="{{ $appointment?->id }}">
     @endif
     <div class="grid md:grid-cols-2 gap-4">
-        @if(! $visit->exists && auth()->user()->role !== 'doctor')
+        @if(! $visit->exists && ! auth()->user()->isScopedDoctor())
             <x-field name="doctor_id" type="select" :label="__('Shifokor')" :value="$appointment?->doctor_id" :options="['' => '—'] + $doctors->pluck('name', 'id')->all()" required span="2" />
         @endif
         <x-field name="complaint" type="textarea" :label="__('Shikoyat')" :value="$visit->complaint" span="2" />

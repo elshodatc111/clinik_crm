@@ -15,9 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\EnsureRole::class,
             'clinic' => \App\Http\Middleware\ClinicAccess::class,
         ]);
-        $middleware->web(append: [\App\Http\Middleware\SetLocale::class]);
-        $middleware->validateCsrfTokens(except: ['payme']);
+        $middleware->web(append: [\App\Http\Middleware\SetLocale::class, \App\Http\Middleware\RecordMetrics::class]);
+        $middleware->validateCsrfTokens(except: ['payme', 'payme/c/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->report(function (\Throwable $e) {
+            \App\Services\SystemMonitor::exception($e);
+        });
     })->create();

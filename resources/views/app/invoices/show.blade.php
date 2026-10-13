@@ -29,8 +29,20 @@
             <x-field name="amount" type="number" :label="__('Summa')" :value="$invoice->remaining()" required />
             <x-field name="method" type="select" :label="__('To\'lov turi')" :options="collect(\App\Models\Invoice::methods())->map(fn ($l) => __($l))->all()" />
             <x-field name="note" :label="__('Izoh')" />
+            <x-field name="overpay" type="checkbox" :label="__('Ortiqcha summani avans sifatida qoldirish')" />
             <button class="btn btn-primary w-full">{{ __('Qabul qilish') }}</button>
         </form>
+        @php
+            $pb = \App\Services\PatientBalance::forPatient($invoice->patient_id);
+            $canUse = min($pb['credit'], $invoice->remaining());
+        @endphp
+        @if($canUse > 0)
+        <form method="POST" action="{{ route('app.invoices.apply-credit', $invoice) }}" class="card p-5 space-y-3 border-emerald-200">@csrf
+            <div class="font-semibold flex items-center gap-2 text-emerald-700"><x-icon name="wallet" class="w-4 h-4" />{{ __('Bemorning avansi bor') }}: {{ money($pb['credit']) }}</div>
+            <x-field name="amount" type="number" :label="__('Avansdan yopiladigan summa')" :value="$canUse" attrs='max="{{ $canUse }}" min="1"' />
+            <button class="btn w-full">{{ __('Avansdan yopish') }}</button>
+        </form>
+        @endif
         @endif
         <div class="card overflow-hidden">
             <div class="px-4 py-3 font-semibold">{{ __("To'lovlar tarixi") }}</div>
