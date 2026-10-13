@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditLog;
 use App\Models\Clinic;
 use App\Models\ClinicStatusLog;
 use App\Models\Offer;
@@ -10,9 +11,11 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Services\BillingService;
 use App\Services\SmsService;
+use App\Services\Totp;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
@@ -27,12 +30,15 @@ class AuthController extends Controller
 
     public function login(Request $r)
     {
-        $d = $r->validate(['login' => 'required|string|max:150', 'password' => 'required|string']);
+        $d = $r->validate(['login' => 'required|string|max:150', 'password' => 'required|string|max:200']);
         $login = trim($d['login']);
         $key = 'login:'.Str::lower($login).'|'.$r->ip();
+        $ipKey = 'login-ip:'.$r->ip();
 
-        if (RateLimiter::tooManyAttempts($key, 5)) {
-            return back()->withErrors(['login' => __("Juda ko'p urinish. :s soniyadan keyin qayta urinib ko'ring.", ['s' => RateLimiter::availableIn($key)])])->onlyInput('login');
+        if (RateLimiter::tooManyAttempts($key, 5) || RateLimiter::tooManyAttempts($ipKey, 30)) {
+            $s = max(RateLimiter::availableIn($key), RateLimiter::availableIn($ipKey));
+
+            return back()->withErrors(['login' => __("Juda ko'p urinish. :s soniyadan keyin qayta urinib ko'ring.", ['s' => $s])])->onlyInput('login');
         }
 
         $user = User::where('email', Str::lower($login))
@@ -40,21 +46,97 @@ class AuthController extends Controller
 
         if (! $user || ! Hash::check($d['password'], $user->password) || ! $user->is_active) {
             RateLimiter::hit($key, 60);
+            RateLimiter::hit($ipKey, 60);
+            AuditLog::record('login_failed', $user?->id, $user?->clinic_id, ['login' => mb_substr($login, 0, 40)]);
 
             return back()->withErrors(['login' => __("Login yoki parol noto'g'ri.")])->onlyInput('login');
         }
 
         RateLimiter::clear($key);
-        Auth::login($user, $r->boolean('remember'));
+
+        // Ikki bosqichli tasdiqlash yoqilgan bo'lsa — kod so'raladi
+        if ($user->hasTwoFactor()) {
+            $r->session()->regenerate();
+            session(['2fa' => ['id' => $user->id, 'remember' => $r->boolean('remember'), 'exp' => now()->addMinutes(10)->timestamp]]);
+
+            return redirect()->route('login.2fa');
+        }
+
+        return $this->finishLogin($r, $user, $r->boolean('remember'));
+    }
+
+    protected function finishLogin(Request $r, User $user, bool $remember)
+    {
+        Auth::login($user, $remember);
         $r->session()->regenerate();
         $user->forceFill(['last_login_at' => now()])->saveQuietly();
         session(['locale' => $user->locale]);
+        AuditLog::record('login', $user->id, $user->clinic_id);
 
         return redirect()->route('dashboard');
     }
 
+    public function twoFactorForm(Request $r)
+    {
+        $p = session('2fa');
+        if (! $p || $p['exp'] < time()) {
+            session()->forget('2fa');
+
+            return redirect()->route('login');
+        }
+
+        return view('auth.two-factor');
+    }
+
+    public function twoFactor(Request $r)
+    {
+        $p = session('2fa');
+        if (! $p || $p['exp'] < time() || ! ($user = User::find($p['id'])) || ! $user->is_active || ! $user->hasTwoFactor()) {
+            session()->forget('2fa');
+
+            return redirect()->route('login')->withErrors(['login' => __('Sessiya tugadi. Qaytadan kiring.')]);
+        }
+        $r->validate(['code' => 'required|string|max:30']);
+        $key = '2fa:'.$user->id.'|'.$r->ip();
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            return back()->withErrors(['code' => __("Juda ko'p urinish. :s soniyadan keyin qayta urinib ko'ring.", ['s' => RateLimiter::availableIn($key)])]);
+        }
+
+        $code = trim($r->input('code'));
+        $ok = false;
+        $win = Totp::verify($user->two_factor_secret, $code);
+        if ($win !== null && Cache::add('2fa-used:'.$user->id.':'.$win, 1, 120)) {
+            $ok = true; // bir xil kodni ikki marta ishlatib bo'lmaydi
+        } else {
+            $codes = $user->two_factor_recovery_codes ?: [];
+            $norm = Str::lower(str_replace(' ', '', $code));
+            foreach ($codes as $i => $rc) {
+                if (hash_equals(Str::lower($rc), $norm)) {
+                    unset($codes[$i]);
+                    $user->forceFill(['two_factor_recovery_codes' => array_values($codes)])->saveQuietly();
+                    AuditLog::record('2fa_recovery', $user->id, $user->clinic_id);
+                    $ok = true;
+                    break;
+                }
+            }
+        }
+        if (! $ok) {
+            RateLimiter::hit($key, 300);
+            AuditLog::record('2fa_failed', $user->id, $user->clinic_id);
+
+            return back()->withErrors(['code' => __("Kod noto'g'ri.")]);
+        }
+        RateLimiter::clear($key);
+        session()->forget('2fa');
+
+        return $this->finishLogin($r, $user, (bool) $p['remember']);
+    }
+
     public function logout(Request $r)
     {
+        if ($r->user()) {
+            AuditLog::record('logout', $r->user()->id, $r->user()->clinic_id);
+        }
         Auth::logout();
         $r->session()->invalidate();
         $r->session()->regenerateToken();
@@ -84,7 +166,7 @@ class AuthController extends Controller
             'owner_name' => 'required|string|max:150',
             'phone' => ['required', 'string', 'regex:/^\+?[0-9\s\-\(\)]{9,20}$/'],
             'email' => 'nullable|email|max:150|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'string', 'max:100', 'confirmed', new \App\Rules\StrongPassword],
             'accept_offer' => 'accepted',
         ]);
 
@@ -130,6 +212,11 @@ class AuthController extends Controller
         if (! $reg) {
             return redirect()->route('register');
         }
+        $key = 'resend:'.$reg['phone'];
+        if (RateLimiter::tooManyAttempts($key, 3)) {
+            return back()->withErrors(['code' => __("Juda ko'p urinish. :s soniyadan keyin qayta urinib ko'ring.", ['s' => RateLimiter::availableIn($key)])]);
+        }
+        RateLimiter::hit($key, 600);
         $this->sendCode($reg['phone']);
 
         return back()->with('success', __('Kod qayta yuborildi.'));
@@ -179,6 +266,8 @@ class AuthController extends Controller
             ]);
             OfferAcceptance::create([
                 'clinic_id' => $clinic->id,
+                'user_id' => $user->id,
+                'context' => 'register',
                 'clinic_name' => $clinic->name,
                 'user_name' => $user->name,
                 'phone' => $clinic->phone,
@@ -208,7 +297,7 @@ class AuthController extends Controller
             'phone' => $phone, 'code' => Hash::make($code), 'expires_at' => now()->addMinutes(5),
             'attempts' => 0, 'created_at' => now(), 'updated_at' => now(),
         ]);
-        $sent = SmsService::send($phone, 'Tasdiqlash kodi: '.$code.'. '.BillingService::appName());
+        $sent = SmsService::send($phone, 'Tasdiqlash kodi: '.$code.'. '.BillingService::appName(), null, false, 'otp');
         if (! $sent && config('app.debug')) {
             session()->flash('dev_code', $code); // faqat test rejimida (APP_DEBUG=true va Eskiz sozlanmagan)
         }

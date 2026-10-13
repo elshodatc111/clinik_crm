@@ -31,7 +31,7 @@ class StaffController extends Controller
             'phone' => ['required', 'string', 'regex:/^\+?[0-9\s\-\(\)]{9,20}$/'],
             'email' => ['nullable', 'email', 'max:150', Rule::unique('users', 'email')->ignore($staff?->id)],
             'role' => ['required', Rule::in(array_keys(User::clinicRoles()))],
-            'password' => [$staff ? 'nullable' : 'required', 'string', 'min:8'],
+            'password' => [$staff ? 'nullable' : 'required', 'string', 'max:100', new \App\Rules\StrongPassword],
             'position' => ['nullable', Rule::in(['director', 'admin'])],
             'extra_roles' => 'nullable|array',
             'extra_roles.*' => [Rule::in(array_keys(User::assignableRoles()))],

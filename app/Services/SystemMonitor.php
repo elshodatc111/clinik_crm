@@ -142,6 +142,38 @@ class SystemMonitor
         } catch (\Throwable $e) {
         }
 
+        return array_merge($out, static::securityChecks());
+    }
+
+    /** Sotuvga chiqarishdan oldin tekshiriladigan xavfsizlik holati. */
+    public static function securityChecks(): array
+    {
+        $out = [];
+        $prod = app()->environment('production');
+        $out[] = ['sec_env', 'Muhit (APP_ENV)', $prod ? 'ok' : 'warn', (string) app()->environment(), $prod ? '' : "Sotuvda APP_ENV=production bo'lishi kerak"];
+        $out[] = ['sec_debug', 'Debug rejimi', config('app.debug') ? 'bad' : 'ok', config('app.debug') ? 'YOQILGAN' : "O'chiq", config('app.debug') ? "APP_DEBUG=false qiling — aks holda xatolarda maxfiy ma'lumot chiqadi" : ''];
+        $https = str_starts_with((string) config('app.url'), 'https://');
+        $out[] = ['sec_https', 'HTTPS', $https ? 'ok' : 'warn', $https ? 'Yoqilgan' : "APP_URL https emas", $https ? '' : "Bemor ma'lumotlari faqat HTTPS orqali uzatilishi kerak"];
+        $cookie = (bool) config('session.secure') || ! $prod;
+        $out[] = ['sec_cookie', 'Xavfsiz cookie', $cookie ? 'ok' : 'warn', config('session.secure') ? 'Secure' : 'Secure emas', $cookie ? '' : 'SESSION_SECURE_COOKIE=true qiling'];
+
+        try {
+            $supers = \App\Models\User::where('role', \App\Models\User::SUPER)->get();
+            $no2fa = $supers->filter(fn ($u) => ! $u->hasTwoFactor())->count();
+            $out[] = ['sec_2fa', 'Super Admin 2FA', $no2fa === 0 && $supers->count() ? 'ok' : 'warn', $no2fa === 0 ? 'Yoqilgan' : $no2fa.' ta akkauntda yo\'q', 'Profil → Ikki bosqichli tasdiqlash'];
+            $weak = Cache::remember('sec_weak_pw', 3600, fn () => \App\Models\User::query()->limit(300)->get(['id', 'password'])->filter(fn ($u) => \Illuminate\Support\Facades\Hash::check('ChangeMe123!', $u->password) || \Illuminate\Support\Facades\Hash::check('password123', $u->password))->count());
+            $out[] = ['sec_pass', 'Standart parollar', $weak ? 'bad' : 'ok', $weak ? $weak.' ta akkaunt' : 'Topilmadi', $weak ? "Standart/demo parolli akkauntlar parolini almashtiring" : ''];
+        } catch (\Throwable $e) {
+        }
+
+        $dir = storage_path('app/backups');
+        $last = 0;
+        foreach (glob($dir.'/db-*') ?: [] as $f) {
+            $last = max($last, filemtime($f));
+        }
+        $age = $last ? (time() - $last) / 3600 : null;
+        $out[] = ['sec_backup', 'Zaxira nusxa', $age !== null && $age < 30 ? 'ok' : ($age !== null ? 'warn' : 'bad'), $age === null ? "Hali olinmagan" : round($age).' soat oldin', "php artisan db:backup (har kuni 03:00 avtomatik). Nusxani boshqa serverga ham ko'chiring"];
+
         return $out;
     }
 

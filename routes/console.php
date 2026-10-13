@@ -13,3 +13,6 @@ Schedule::call(fn () => \App\Services\BookingService::expireStale())->everyMinut
 
 // Har kuni ertalab: klinikalar kamchiliklari bo'yicha ilova ichidagi xabarlar
 Schedule::command('clinics:diagnose')->dailyAt('09:00');
+
+// Har kuni tunda: ma'lumotlar bazasi zaxira nusxasi (14 kun saqlanadi)
+Schedule::command('db:backup')->dailyAt('03:00');

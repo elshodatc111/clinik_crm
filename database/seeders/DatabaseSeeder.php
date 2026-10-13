@@ -40,9 +40,10 @@ class DatabaseSeeder extends Seeder
         if (Offer::count() === 0) {
             Offer::create([
                 'version' => 1,
-                'title' => 'Ommaviy oferta (namuna)',
+                'title' => 'Ommaviy oferta',
                 'is_active' => true,
                 'body' => file_get_contents(database_path('seeders/offer_uz.txt')),
+                'body_ru' => file_get_contents(database_path('seeders/offer_ru.txt')),
             ]);
         }
 

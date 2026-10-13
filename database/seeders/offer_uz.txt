@@ -1,32 +1,142 @@
-DIQQAT: bu matn NAMUNA. Ishga tushirishdan oldin yurist tomonidan ko'rib chiqilib, Super Admin panelidagi "Oferta" bo'limida yangi versiya sifatida kiritilishi shart.
+OMMAVIY OFERTA
+{{APP}} bulutli klinika boshqaruv tizimidan foydalanish shartlari
 
-1. UMUMIY QOIDALAR
-1.1. Mazkur ommaviy oferta (keyingi o'rinlarda — Oferta) dastur ta'minoti egasi (Ijrochi) va dasturdan foydalanuvchi tibbiyot muassasasi (Buyurtmachi) o'rtasidagi munosabatlarni tartibga soladi.
-1.2. Buyurtmachi ro'yxatdan o'tishda "Ofertaga roziman" belgisini qo'yish orqali Oferta shartlarini to'liq qabul qilgan hisoblanadi. Rozilik vaqti, IP-manzil va Oferta versiyasi saqlanadi.
+Versiya sanasi: {{DATE}}
 
-2. XIZMAT PREDMETI
-2.1. Ijrochi Buyurtmachiga klinikani boshqarish uchun bulutli CRM tizimidan foydalanish huquqini beradi.
-2.2. Har bir klinika ma'lumotlari boshqa klinikalardan to'liq alohida saqlanadi va ularga boshqa klinikalar kira olmaydi.
+1. ATAMALAR
+1.1. Oferta — ushbu hujjat. U O'zbekiston Respublikasi Fuqarolik kodeksining ommaviy oferta to'g'risidagi qoidalariga muvofiq tuzilgan va cheklanmagan doiradagi shaxslarga qaratilgan taklifdir.
+1.2. Ijrochi — {{COMPANY}}, {{APP}} tizimining egasi va operatori. Rekvizitlari ushbu hujjat oxirida ko'rsatilgan.
+1.3. Buyurtmachi — Ijrochi bilan shartnoma tuzgan tibbiyot muassasasi (klinika, poliklinika, markaz, xususiy shifokor).
+1.4. Tizim — {{APP}} nomi ostidagi bulutli dasturiy ta'minot: veb-sayt, mobil/kompyuter uchun o'rnatiladigan ilova va unga tegishli barcha modullar.
+1.5. Foydalanuvchi — Buyurtmachi tomonidan Tizimga kirish huquqi berilgan xodim (direktor, administrator, qabulxona xodimi, shifokor, kassir, laborant va boshqalar).
+1.6. Bemor — Buyurtmachining tibbiy xizmatlaridan foydalanuvchi jismoniy shaxs.
+1.7. Bemor ma'lumotlari — Buyurtmachi Tizimga kiritgan Bemorlarga oid barcha ma'lumotlar, jumladan shaxsiy ma'lumotlar va tibbiy sir hisoblangan axborot.
+1.8. Demo davri — Tizimdan bepul sinov tartibida foydalanish muddati.
+1.9. Balans — Buyurtmachining Tizimdagi ichki hisobi; u obuna to'lovlari uchun ishlatiladi.
 
-3. DEMO VA OBUNA
-3.1. Yangi Buyurtmachiga 14 kunlik bepul demo davri beriladi.
-3.2. Demo davri tugagunga qadar obunaga o'tilmasa, Buyurtmachiga xabar yuboriladi va demo davrida kiritilgan barcha ma'lumotlar avtomatik o'chiriladi.
-3.3. Obunaga o'tish uchun bir martalik ulanish to'lovi va keyin oylik (30 kunlik) obuna to'lovi to'lanadi. Ulanish to'lovi to'langandan so'ng birinchi oy bepul.
-3.4. Oylik to'lov summasi tizimdagi bemorlar soniga qarab tarif bo'yicha belgilanadi. Bemorlar soni tarif limitidan oshsa, joriy oy oxirigacha xizmat davom etadi va keyingi oydan yuqori tarif bo'yicha hisoblanadi.
-3.5. To'lovlar klinika balansi orqali amalga oshiriladi. Balans Payme to'lov tizimi (Merchant) orqali to'ldiriladi. Oylik to'lov balansdan avtomatik yechiladi.
+2. UMUMIY QOIDALAR VA OFERTANI QABUL QILISH
+2.1. Buyurtmachi ro'yxatdan o'tishda "Ofertaga roziman" belgisini qo'yishi, shuningdek Tizimdan foydalanishni boshlashi Oferta shartlarini to'liq va so'zsiz qabul qilish (aksept) hisoblanadi.
+2.2. Buyurtmachi nomidan ro'yxatdan o'tgan shaxs tegishli vakolatga ega ekanligini tasdiqlaydi.
+2.3. Har bir Foydalanuvchi Tizimga birinchi marta kirganda, shuningdek Oferta yangi versiyasi kuchga kirganda, Oferta bilan tanishganligini tasdiqlashi shart. Tasdiqlamagan Foydalanuvchiga Tizimdan foydalanish imkoni berilmaydi.
+2.4. Rozilik vaqti, IP-manzil, qurilma (brauzer) ma'lumoti, Foydalanuvchi va Oferta versiyasi saqlanadi va nizo yuzaga kelganda dalil sifatida ishlatilishi mumkin.
+2.5. Ijrochi Tizim imkoniyatlarini rivojlantirib boradi; yangi imkoniyatlar Oferta shartlariga muvofiq taqdim etiladi.
 
-4. TO'LOV KECHIKTIRILISHI
-4.1. Oylik to'lov amalga oshirilmasa, tizim faqat ko'rish rejimiga o'tadi.
-4.2. 3-oy yakunigacha to'lov amalga oshirilmasa, klinika to'liq bloklanadi va ro'yxatdan o'tgan telefon raqamiga SMS yuboriladi.
-4.3. Bloklangandan keyin 30 kun ichida to'lov amalga oshirilmasa, shartnoma bekor qilinadi va barcha ma'lumotlar o'chiriladi.
-4.4. Ma'lumotlarni eksport qilish imkoniyati bloklash davrida ham saqlanadi.
+3. OFERTA PREDMETI
+3.1. Ijrochi Buyurtmachiga Tizimdan klinika faoliyatini yuritish maqsadida foydalanish uchun nomonopol, boshqalarga berilmaydigan huquqni obuna asosida beradi.
+3.2. Tizim quyidagi imkoniyatlarni o'z ichiga oladi (tarif va sozlamalarga qarab o'zgarishi mumkin): bemorlar bazasi va tibbiy karta; qabul kalendari; hisob-fakturalar, to'lovlar va kunlik kassa; bemor balansi va avanslar; tahlillar; ish haqi hisobi; hisobotlar; SMS xabarnomalar; onlayn navbatga yozilish; bildirishnomalar; rollar va ruxsatlar; harakatlar jurnali.
+3.3. Tizim tibbiy xizmat emas, tibbiy asbob yoki tashxis qo'yish vositasi ham emas. Barcha klinik qarorlar uchun Buyurtmachi va uning shifokorlari to'liq javobgar. Tizimdagi hisob-kitoblar, tavsiyalar va eslatmalar yordamchi xususiyatga ega.
+3.4. Har bir klinikaning ma'lumotlari boshqa klinikalardan mantiqiy ajratilgan holda saqlanadi; boshqa Buyurtmachilar ularga kira olmaydi.
 
-5. MA'LUMOTLAR VA MAXFIYLIK
-5.1. Buyurtmachi bemorlarning shaxsiy ma'lumotlarini qonunchilikka muvofiq yig'ish va qayta ishlash uchun mustaqil javobgar.
-5.2. Ijrochi ma'lumotlarni uchinchi shaxslarga bermaydi, qonunda nazarda tutilgan hollar bundan mustasno.
+4. RO'YXATDAN O'TISH, AKKAUNTLAR VA XAVFSIZLIK MAJBURIYATLARI
+4.1. Buyurtmachi ro'yxatdan o'tishda to'g'ri va to'liq ma'lumot beradi, ma'lumotlar o'zgarganda ularni yangilaydi.
+4.2. Har bir xodim uchun alohida akkaunt (login va parol) yaratiladi. Akkauntni boshqa shaxsga berish, bitta akkauntdan bir necha kishi foydalanishi taqiqlanadi.
+4.3. Buyurtmachi: (a) parollarning maxfiyligini ta'minlaydi; (b) xodim ishdan ketganda yoki lavozimi o'zgarganda uning akkauntini darhol o'chiradi yoki ruxsatlarini o'zgartiradi; (c) xodimlarga faqat ish uchun zarur bo'lgan rollarni beradi; (d) imkoniyat bor joyda ikki bosqichli autentifikatsiyani yoqadi.
+4.4. Buyurtmachi akkauntlar orqali amalga oshirilgan barcha harakatlar uchun javobgar, agar ular Ijrochi aybi bilan yuz bermagan bo'lsa.
+4.5. Akkaunt buzilgani yoki ruxsatsiz kirish haqida shubha tug'ilsa, Buyurtmachi bu haqda Ijrochiga darhol xabar beradi.
+4.6. Ijrochi xavfsizlikni ta'minlash yoki qonun buzilishining oldini olish maqsadida shubhali akkauntni vaqtincha cheklashga haqli.
 
-6. JAVOBGARLIK
-6.1. Tizim "mavjud holatda" taqdim etiladi. Ijrochi texnik uzilishlar uchun, agar ular Ijrochi aybisiz yuz bergan bo'lsa, javobgar emas.
+5. DEMO DAVRI, TARIFLAR VA TO'LOV TARTIBI
+5.1. Yangi Buyurtmachiga Ijrochi belgilagan muddatda (odatda 14 kun) bepul Demo davri beriladi.
+5.2. Demo davri tugagunga qadar obunaga o'tilmasa, Ijrochi Buyurtmachini ogohlantiradi; keyin Demo davrida kiritilgan barcha ma'lumotlar qaytarib bo'lmaydigan tarzda o'chiriladi. Buyurtmachi bu ma'lumotlarni avval eksport qilib olishi mumkin. Demo davrida haqiqiy bemor ma'lumotlarini kiritish Buyurtmachining o'z javobgarligida amalga oshiriladi.
+5.3. Obunaga o'tish uchun bir martalik ulanish to'lovi va undan keyin oylik (30 kunlik) obuna to'lovi to'lanadi. Ulanish to'lovi to'langandan keyingi birinchi oy bepul bo'lishi mumkin; aniq shartlar Tizimdagi "Obuna va balans" bo'limida ko'rsatiladi.
+5.4. Oylik to'lov summasi Tizimdagi bemorlar soniga qarab tarif bo'yicha belgilanadi. Bemorlar soni joriy tarif chegarasidan oshsa, joriy to'lov davri oxirigacha xizmat davom etadi, keyingi davrdan yuqori tarif qo'llanadi.
+5.5. To'lovlar Balans orqali amalga oshiriladi. Balans Payme to'lov tizimi (Merchant) orqali to'ldiriladi. Oylik to'lov Balansdan avtomatik yechiladi. Ijrochi bank kartasi ma'lumotlarini saqlamaydi va ularga kira olmaydi; ular to'lov tizimi tomonidan qayta ishlanadi.
+5.6. Tariflar va narxlar Tizim sahifalarida e'lon qilinadi. Ijrochi narxlarni o'zgartirishi mumkin; o'zgarish kuchga kirishidan kamida 15 kun oldin Buyurtmachiga Tizim orqali yoki telefon/SMS orqali xabar beriladi. O'zgarish kuchga kirgunga qadar to'langan davr uchun narx o'zgarmaydi.
+5.7. Soliqlar va majburiy to'lovlar amaldagi qonunchilikka muvofiq hisoblanadi.
+5.8. Xizmat ko'rsatilgan davr uchun to'langan obuna to'lovi, ulanish to'lovi qaytarilmaydi, qonunda boshqacha nazarda tutilgan yoki Ijrochi xatosi bilan ortiqcha yechilgan hollar bundan mustasno. Balansdagi foydalanilmagan mablag' shartnoma bekor qilinganda Buyurtmachining yozma talabiga binoan 30 kun ichida qaytariladi.
+5.9. To'lov hujjatlari (hisob, dalolatnoma) Buyurtmachi talabiga binoan taqdim etiladi.
 
-7. REKVIZITLAR VA ALOQA
-Ijrochi rekvizitlari va aloqa ma'lumotlari tizim sozlamalarida ko'rsatiladi.
+6. TO'LOV KECHIKTIRILISHI VA XIZMATNI CHEKLASH
+6.1. Oylik to'lov amalga oshirilmasa, Tizim "faqat ko'rish" rejimiga o'tadi: ma'lumotlarni ko'rish va eksport qilish mumkin, yangi yozuv qo'shib bo'lmaydi.
+6.2. To'lov muddati o'tgan kundan boshlab 3 (uch) oy ichida to'lanmasa, Buyurtmachi to'liq bloklanadi va ro'yxatdan o'tgan telefon raqamiga xabar yuboriladi.
+6.3. Bloklangandan keyin 30 (o'ttiz) kun ichida to'lov amalga oshirilmasa, shartnoma bekor qilingan hisoblanadi va Buyurtmachi ma'lumotlari o'chiriladi.
+6.4. Ma'lumotlarni eksport qilish imkoniyati bloklash davrida ham saqlanadi.
+6.5. To'lov tiklanganda Tizim to'liq rejimga qaytariladi.
+
+7. MA'LUMOTLAR EGALIGI, SAQLASH VA O'CHIRISH
+7.1. Bemor ma'lumotlari va Buyurtmachi Tizimga kiritgan boshqa kontent Buyurtmachiga tegishli. Ijrochi ularga mulkiy huquq da'vo qilmaydi.
+7.2. Buyurtmachi istalgan vaqtda ma'lumotlarini Tizimdagi eksport funksiyasi orqali yuklab olishi mumkin.
+7.3. Ijrochi Tizim ma'lumotlarining zaxira nusxalarini muntazam yaratadi va ularni cheklangan muddat saqlaydi. Zaxira nusxa Ijrochining xizmat ko'rsatish uchun ichki vositasi bo'lib, Buyurtmachiga alohida kafolat sifatida berilmaydi; Buyurtmachi muhim ma'lumotlarning o'z nusxasini ham saqlab borishi tavsiya etiladi.
+7.4. Shartnoma bekor qilinganda yoki 6.3-bandda nazarda tutilgan hollarda ma'lumotlar o'chiriladi. Zaxira nusxalardagi ma'lumotlar o'z saqlash muddati tugagach o'chadi.
+7.5. Qonunda belgilangan hollarda vakolatli davlat organlarining asosli so'rovi bo'yicha Ijrochi ma'lumotlarni taqdim etishga majbur bo'lishi mumkin; imkon bo'lsa, Buyurtmachiga bu haqda xabar beriladi.
+
+8. SHAXSIY MA'LUMOTLAR VA TIBBIY SIR
+8.1. Bemorlarga nisbatan shaxsiy ma'lumotlar egasi/operatori Buyurtmachi hisoblanadi. U O'zbekiston Respublikasining "Shaxsiy ma'lumotlar to'g'risida"gi Qonuni, tibbiy sir va tibbiyot sohasidagi boshqa qonunchilik talablariga rioya qilish uchun mustaqil javobgar bo'ladi.
+8.2. Buyurtmachi: (a) Bemorlardan ma'lumotlarini yig'ish va qayta ishlashga qonunda belgilangan tartibda rozilik oladi; (b) Tizimga faqat zarur ma'lumotlarni kiritadi; (c) ma'lumotlardan faqat qonuniy maqsadlarda foydalanadi; (d) Bemorlarning o'z ma'lumotlariga oid so'rovlariga (ko'rish, tuzatish, o'chirish) javob beradi.
+8.3. Ijrochi Bemor ma'lumotlarini faqat Buyurtmachi nomidan va uning topshirig'iga binoan — Tizim xizmatini ko'rsatish maqsadida qayta ishlaydi. Ijrochi ma'lumotlarni sotmaydi, reklama yoki boshqa maqsadlarda ishlatmaydi, uchinchi shaxslarga bermaydi (8.5-band bundan mustasno).
+8.4. Ijrochi xodimlari Bemor ma'lumotlariga faqat texnik qo'llab-quvvatlash zarurati bo'lganda va Buyurtmachi roziligi yoki so'rovi bilan kiradi; bunday kirish jurnalda qayd etiladi. Ijrochi xodimlari maxfiylikni saqlash majburiyatini oladi.
+8.5. Ma'lumotlar quyidagi hollarda uchinchi shaxslarga uzatilishi mumkin: (a) Buyurtmachi o'zi ulagan xizmatlar (SMS provayderi, to'lov tizimi, JSHSHIR ma'lumot provayderi) orqali, ushbu xizmatlar ishlashi uchun zarur hajmda; (b) Ijrochining infratuzilma (serverlar, zaxira) xizmat ko'rsatuvchilariga, ular maxfiylik majburiyati ostida bo'lgan holda; (c) qonunda nazarda tutilgan hollarda davlat organlariga.
+8.6. Ijrochi qonunchilikda ma'lumotlarni lokalizatsiya qilish bo'yicha belgilangan talablarga rioya qilish uchun O'zbekiston fuqarolarining shaxsiy ma'lumotlarini O'zbekiston Respublikasi hududidagi texnik vositalarda saqlashni ta'minlashga harakat qiladi va bu talabni buzmaslik uchun zarur choralarni ko'radi.
+8.7. Ma'lumotlarni qayta ishlash tartibi Ijrochining Maxfiylik siyosatida batafsil bayon etilgan; u ushbu Ofertaning ajralmas qismi hisoblanadi.
+
+9. AXBOROT XAVFSIZLIGI
+9.1. Ijrochi Bemor ma'lumotlarini ruxsatsiz kirish, yo'qotish va buzilishdan himoya qilish uchun tashkiliy va texnik choralarni qo'llaydi, jumladan: har bir klinika ma'lumotlarining mantiqiy ajratilishi; rollarga asoslangan kirish nazorati; parollarni qaytarib bo'lmaydigan tarzda saqlash; uchinchi tomon xizmat kalitlarini shifrlangan holda saqlash; harakatlar jurnali; shubhali urinishlarni cheklash; ikki bosqichli autentifikatsiya imkoniyati; ma'lumotlarni himoyalangan (HTTPS) aloqa kanali orqali uzatish; zaxira nusxalash.
+9.2. Hech bir axborot tizimi mutlaq xavfsiz bo'la olmaydi. Ijrochi oqilona va sohada qabul qilingan darajadagi himoyani ta'minlashga majbur, ammo uzilishsiz va xatosiz ishlashni kafolatlamaydi.
+9.3. Bemor ma'lumotlariga ruxsatsiz kirish (ma'lumotlar sizib chiqishi) holati aniqlansa, Ijrochi bu haqda Buyurtmachiga imkon qadar tezroq, har holda aniqlangandan keyin 72 soat ichida xabar beradi, hodisa sabablarini bartaraf etish choralarini ko'radi va Buyurtmachiga qonunda talab etiladigan xabarnomalar uchun zarur ma'lumotni taqdim etadi.
+9.4. Buyurtmachi o'z qurilmalari, tarmog'i va xodimlari xavfsizligi (antivirus, yangilanishlar, ishonchli Wi-Fi, ekranni qulflash) uchun javobgar.
+
+10. UCHINCHI TOMON XIZMATLARI
+10.1. Tizim uchinchi tomon xizmatlari bilan integratsiya qilinishi mumkin: Payme (to'lovlar), Eskiz (SMS), JSHSHIR ma'lumot provayderlari va boshqalar. Ularning shartlari, tariflari va ishonchliligi uchun ushbu xizmat egalari javob beradi.
+10.2. Buyurtmachi SMS va JSHSHIR xizmatlari bo'yicha provayderlar bilan shartnomani o'zi tuzadi, o'z akkaunti ma'lumotlarini kiritadi va xarajatlarni o'zi to'laydi. Ijrochi bu xizmatlar uchun to'lov vositachisi emas.
+10.3. Onlayn navbatga yozilishda Bemorlar to'lovi Buyurtmachining o'z Payme kassasiga tushadi. Ijrochi bu mablag'larni qabul qilmaydi, saqlamaydi va taqsimlamaydi, Buyurtmachi va Bemor o'rtasidagi hisob-kitoblar, qaytarishlar va nizolar uchun javobgar emas.
+10.4. SMS shablonlarini Eskiz tizimida tasdiqlatish Buyurtmachining vazifasi; tasdiqlanmagan matnlar yuborilmasligi mumkin.
+
+11. ONLAYN NAVBATGA YOZILISH
+11.1. Buyurtmachi onlayn qabul sahifasi uchun o'z oferta shartlarini (xizmat narxi, bekor qilish va qaytarish tartibi) belgilaydi. Bemor navbatga yozilishda bu shartlar va shaxsiy ma'lumotlarni qayta ishlashga rozilikni tasdiqlamaguncha yozilish amalga oshmaydi.
+11.2. Bemor roziligi (vaqt, matn versiyasi) bron bilan birga saqlanadi.
+11.3. Buyurtmachi onlayn qabulda ko'rsatilgan xizmat, narx va ish vaqtining to'g'riligi uchun javobgar.
+
+12. TAQIQLANGAN HARAKATLAR
+12.1. Buyurtmachi va Foydalanuvchilarga quyidagilar taqiqlanadi: (a) Tizimning boshqa klinika ma'lumotlariga kirishga urinish; (b) Tizim xavfsizligini aylanib o'tish, zaiflikni qidirish yoki ekspluatatsiya qilish, avtomatlashtirilgan so'rovlar bilan yuklama berish; (c) dasturiy kodni dekompilyatsiya qilish, nusxalash, qayta sotish yoki sublitsenziyaga berish; (d) Tizim orqali spam, aldamchi yoki noqonuniy xabarlar yuborish; (e) qonunga zid, yolg'on yoki uchinchi shaxslar huquqlarini buzuvchi ma'lumotlarni kiritish; (f) Tizimning ishlashiga to'sqinlik qiluvchi zararli kodni joylashtirish.
+12.2. Taqiqlar buzilganda Ijrochi ogohlantirmasdan akkauntni cheklashi yoki shartnomani bekor qilishi mumkin; bu holda to'langan summalar qaytarilmaydi.
+
+13. INTELLEKTUAL MULK
+13.1. Tizim, uning dasturiy kodi, dizayni, nomi, logotiplari va hujjatlariga bo'lgan barcha mulkiy va shaxsiy nomulkiy huquqlar Ijrochiga tegishli.
+13.2. Buyurtmachiga faqat Oferta doirasida foydalanish huquqi beriladi; mulk huquqi o'tmaydi.
+13.3. Buyurtmachi o'z logotipi va materiallarini Tizimga joylashtirish orqali ularni Tizim doirasida ko'rsatishga Ijrochiga huquq beradi.
+
+14. XIZMAT DARAJASI VA QO'LLAB-QUVVATLASH
+14.1. Ijrochi Tizimning barqaror ishlashiga intiladi, lekin uzluksiz ishlashni kafolatlamaydi. Rejalashtirilgan texnik ishlar iloji boricha kam yuklama vaqtida o'tkaziladi va oldindan xabar qilinadi.
+14.2. Texnik qo'llab-quvvatlash Tizimda ko'rsatilgan aloqa kanallari orqali ish vaqtida ko'rsatiladi.
+14.3. Quyidagilar Ijrochi javobgarligiga kirmaydi: Buyurtmachi interneti, qurilmalari va dasturlarining nosozligi; uchinchi tomon xizmatlaridagi uzilishlar; Buyurtmachining noto'g'ri sozlamalari.
+
+15. JAVOBGARLIK
+15.1. Tizim "mavjud holatda" taqdim etiladi. Ijrochi texnik uzilishlar uchun, agar ular uning aybisiz yuz bergan bo'lsa, javobgar emas.
+15.2. Ijrochi aybi bilan yetkazilgan zarar uchun javobgarlik, qonunda boshqacha belgilanmagan bo'lsa, zarar yetkazilgan paytdan oldingi 3 (uch) oy uchun Buyurtmachi to'lagan obuna to'lovlari miqdori bilan cheklanadi. Boy berilgan foyda, obro'ga yetkazilgan zarar va bilvosita zararlar qoplanmaydi.
+15.3. Buyurtmachi Tizimdan qonunga zid foydalanish, Bemorlar bilan munosabatlar, tibbiy xizmat sifati va Bemor ma'lumotlarini qayta ishlash qonuniyligi bo'yicha uchinchi shaxslar (jumladan Bemorlar va davlat organlari) oldida o'zi javob beradi va shu sabab Ijrochiga qo'yilgan da'volar bo'yicha Ijrochi zararini qoplaydi.
+15.4. Tomonlar o'z majburiyatlarini engib bo'lmaydigan kuch holatlari (tabiiy ofat, urush, davlat organlarining taqiqlovchi qarorlari, keng ko'lamli tarmoq uzilishlari va h.k.) sababli bajara olmasa, javobgarlikdan ozod bo'ladi.
+
+16. MAXFIYLIK
+16.1. Tomonlar bir-birining tijorat va texnik ma'lumotlari, shuningdek Oferta doirasida olingan maxfiy axborotni oshkor qilmaydi. Qonun bo'yicha oshkor qilish talab etilgan hollar bundan mustasno.
+16.2. Maxfiylik majburiyati Oferta bekor qilingandan keyin ham 3 yil davom etadi; Bemor ma'lumotlari va tibbiy sir bo'yicha majburiyat muddatsizdir.
+
+17. OFERTANI O'ZGARTIRISH
+17.1. Ijrochi Ofertani bir tomonlama o'zgartirishga haqli. Yangi versiya Tizimda e'lon qilinganda kuchga kiradi; muhim o'zgarishlar kuchga kirishidan kamida 15 kun oldin Buyurtmachiga xabar qilinadi.
+17.2. Yangi versiya e'lon qilingach, Foydalanuvchilar Tizimga keyingi kirishda uni tasdiqlashlari shart. Tasdiqlamagan Foydalanuvchi Tizimdan foydalana olmaydi.
+17.3. Yangi versiyaga rozi bo'lmagan Buyurtmachi shartnomani bekor qilishga haqli (19-band).
+
+18. ROZILIK DALILI
+18.1. Ofertani qabul qilish elektron shaklda amalga oshiriladi va yozma shartnoma tuzilganligiga tenglashtiriladi.
+18.2. Tomonlar elektron jurnaldagi yozuvlarni (kirish, rozilik, to'lov va harakatlar jurnali) dalil sifatida tan oladi.
+
+19. SHARTNOMANI BEKOR QILISH
+19.1. Buyurtmachi istalgan vaqtda Ijrochiga yozma (elektron) xabar yuborib Ofertadan voz kechishi mumkin. Xizmat to'langan davr oxirigacha davom etadi.
+19.2. Ijrochi quyidagi hollarda shartnomani bekor qilishi mumkin: Oferta shartlari (ayniqsa 12-band) buzilganda; 6-bandda nazarda tutilgan to'lov kechikishi; qonun talabi.
+19.3. Bekor qilingach, Buyurtmachi ma'lumotlarini eksport qilishi uchun kamida 30 kun beriladi (6-banddagi holat bundan mustasno), keyin ma'lumotlar o'chiriladi.
+
+20. NIZOLARNI HAL QILISH VA QO'LLANADIGAN HUQUQ
+20.1. Oferta O'zbekiston Respublikasi qonunchiligiga muvofiq tushuniladi va qo'llanadi.
+20.2. Nizolar avvalo muzokaralar yo'li bilan hal qilinadi. Da'vo tartibi: da'vo xati yuboriladi va javob uchun 15 kalendar kun beriladi.
+20.3. Kelishuvga erishilmasa, nizo Ijrochi joylashgan joydagi vakolatli sud tomonidan ko'rib chiqiladi.
+
+21. YAKUNIY QOIDALAR
+21.1. Oferta bandlaridan biri haqiqiy emas deb topilsa, qolgan bandlar kuchda qoladi.
+21.2. Maxfiylik siyosati Ofertaning ajralmas qismidir.
+21.3. Oferta o'zbek va rus tillarida e'lon qilinadi; ular o'rtasida farq bo'lsa, o'zbek tilidagi matn ustun turadi.
+
+22. IJROCHI REKVIZITLARI VA ALOQA
+{{COMPANY}}
+Manzil: {{ADDRESS}}
+Telefon: {{PHONE}}
+E-pochta: {{EMAIL}}
+Veb-sayt: {{SITE}}

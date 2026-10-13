@@ -13,7 +13,7 @@
     <x-field name="password_confirmation" type="password" :label="__('Parolni takrorlang')" required />
     <label class="flex items-start gap-2 text-sm">
         <input type="checkbox" name="accept_offer" value="1" x-model="accepted" class="mt-1 rounded border-slate-300">
-        <span>{{ __('Men') }} <a href="{{ route('offer') }}" target="_blank" class="link">{{ __('ommaviy oferta')}}</a> {{ __('shartlari bilan tanishdim va roziman') }}</span>
+        <span>{{ __('Men') }} <a href="{{ route('offer') }}" target="_blank" class="link">{{ __('ommaviy oferta')}}</a> {{ __('va') }} <a href="{{ route('privacy') }}" target="_blank" class="link">{{ __('maxfiylik siyosati') }}</a> {{ __('shartlari bilan tanishdim va roziman') }}</span>
     </label>
     @error('accept_offer')<p class="text-xs text-red-600">{{ __('Davom etish uchun ofertaga rozilik bering.') }}</p>@enderror
     <button class="btn btn-primary w-full" :disabled="!accepted" :class="!accepted && 'opacity-50 cursor-not-allowed'">{{ __('Kodni yuborish') }}</button>

@@ -71,7 +71,7 @@ class AccountController extends Controller
         }
         $d = $r->validateWithBag('password', [
             'current_password' => 'required|string',
-            'password' => ['required', 'string', 'min:8', 'max:100', 'confirmed', 'different:current_password'],
+            'password' => ['required', 'string', 'max:100', 'confirmed', 'different:current_password', new \App\Rules\StrongPassword],
         ]);
         if (! Hash::check($d['current_password'], $u->password)) {
             RateLimiter::hit($key, 60);

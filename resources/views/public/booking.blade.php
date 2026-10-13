@@ -65,6 +65,8 @@
             </div>
             <label class="mt-4 flex items-start gap-2 text-sm text-slate-600"><input type="checkbox" x-model="f.accept" class="mt-0.5 rounded"> <span>{{ __("Men") }} <a href="{{ route('booking.offer', $clinic->slug) }}" target="_blank" class="link font-medium">{{ __("ommaviy oferta") }}</a> {{ __("shartlari bilan tanishdim, shaxsiy ma'lumotlarimni qayta ishlashga va to'lov shartlariga roziman") }}</span></label>
             <p class="err" x-text="err('accept')"></p>
+            <label class="mt-3 flex items-start gap-2 text-sm text-slate-600"><input type="checkbox" x-model="f.privacy" class="mt-0.5 rounded"> <span>{{ __("Men") }} <a href="{{ route('privacy') }}" target="_blank" class="link font-medium">{{ __("maxfiylik siyosati") }}</a> {{ __("bilan tanishdim va shaxsiy hamda tibbiy ma'lumotlarimni qayta ishlashga roziman") }}</span></label>
+            <p class="err" x-text="err('accept_privacy')"></p>
         </section>
     </div>
 
@@ -93,7 +95,7 @@
 function booking(services, urls) {
     return {
         services, urls, service: null, doctor: null, date: '', time: '', slots: [], loading: false, busy: false, error: '', errors: {},
-        f: { last_name: '', first_name: '', middle_name: '', birth_date: '', phone: '', accept: false },
+        f: { last_name: '', first_name: '', middle_name: '', birth_date: '', phone: '', accept: false, privacy: false },
         money(n) { return Number(n || 0).toLocaleString('ru-RU') + " so'm"; },
         fmtDate(d) { const [y, m, dd] = d.split('-'); return dd + '.' + m + '.' + y; },
         err(k) { return (this.errors[k] || [''])[0]; },
@@ -109,14 +111,14 @@ function booking(services, urls) {
             } catch (e) { this.slots = []; }
             this.loading = false;
         },
-        get canSubmit() { return this.service && this.doctor && this.date && this.time && this.f.last_name && this.f.first_name && this.f.phone && this.f.accept; },
+        get canSubmit() { return this.service && this.doctor && this.date && this.time && this.f.last_name && this.f.first_name && this.f.phone && this.f.accept && this.f.privacy; },
         async submit() {
             this.busy = true; this.error = ''; this.errors = {};
             try {
                 const r = await fetch(this.urls.book, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
-                    body: JSON.stringify({ service: this.service.id, doctor: this.doctor.id, date: this.date, time: this.time, ...this.f, accept: this.f.accept ? 1 : 0 }),
+                    body: JSON.stringify({ service: this.service.id, doctor: this.doctor.id, date: this.date, time: this.time, ...this.f, accept: this.f.accept ? 1 : 0, accept_privacy: this.f.privacy ? 1 : 0 }),
                 });
                 const j = await r.json();
                 if (r.ok && j.url) { window.location = j.url; return; }

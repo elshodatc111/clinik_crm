@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
-    protected array $plain = ['app_name', 'primary_color', 'support_phone', 'support_phone2', 'support_email', 'contact_address', 'contact_hours', 'contact_telegram', 'contact_instagram', 'contact_map_url', 'setup_fee', 'demo_days', 'demo_grace_days', 'eskiz_email', 'eskiz_from', 'payme_merchant_id'];
+    protected array $plain = ['app_name', 'company_name', 'primary_color', 'support_phone', 'support_phone2', 'support_email', 'contact_address', 'contact_hours', 'contact_telegram', 'contact_instagram', 'contact_map_url', 'setup_fee', 'demo_days', 'demo_grace_days', 'eskiz_email', 'eskiz_from', 'payme_merchant_id'];
 
     protected array $secret = ['eskiz_password', 'payme_key', 'payme_test_key'];
 
@@ -22,6 +22,7 @@ class SettingController extends Controller
     {
         $d = $r->validate([
             'app_name' => 'required|string|max:60',
+            'company_name' => 'nullable|string|max:200',
             'primary_color' => ['required', 'regex:/^#[0-9a-fA-F]{6}$/'],
             'support_phone' => 'nullable|string|max:30',
             'support_email' => 'nullable|email|max:100',

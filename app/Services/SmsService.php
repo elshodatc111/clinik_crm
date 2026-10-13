@@ -39,7 +39,7 @@ class SmsService
         if (strlen($phone) < 12) {
             return false;
         }
-        $log = SmsLog::create(['clinic_id' => $clinicId, 'phone' => $phone, 'message' => $text, 'status' => 'pending', 'event' => $event]);
+        $log = SmsLog::create(['clinic_id' => $clinicId, 'phone' => $phone, 'message' => $event === 'otp' ? preg_replace('/\d{6}/', '••••••', $text) : $text, 'status' => 'pending', 'event' => $event]);
 
         // Klinika SMS xizmatini o'chirib qo'ygan bo'lsa, bemorlarga hech narsa yuborilmaydi
         if ($viaClinic && $clinicId && Clinic::find($clinicId)?->setting('sms_enabled', true) === false) {
@@ -50,7 +50,7 @@ class SmsService
 
         $creds = $viaClinic ? static::clinicCreds($clinicId) : static::platformCreds();
         if (! $creds) {
-            Log::info("SMS (Eskiz sozlanmagan) -> {$phone}: {$text}");
+            Log::info("SMS (Eskiz sozlanmagan) -> {$phone}: ".($event === 'otp' ? '[kod yashirilgan]' : $text));
             $log->update(['status' => 'skipped', 'response' => $viaClinic ? 'Klinika Eskiz akkaunti ulanmagan' : 'Eskiz sozlanmagan']);
 
             return false;

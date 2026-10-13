@@ -10,16 +10,25 @@ use Illuminate\Support\Facades\Route;
 // ---------- Ommaviy qism ----------
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/offer', [LandingController::class, 'offer'])->name('offer');
+Route::get('/privacy', [LandingController::class, 'privacy'])->name('privacy');
 Route::get('/lang/{locale}', [LandingController::class, 'lang'])->name('lang');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:60,1')->name('login.post');
+    Route::get('/login/2fa', [AuthController::class, 'twoFactorForm'])->name('login.2fa');
+    Route::post('/login/2fa', [AuthController::class, 'twoFactor'])->middleware('throttle:20,1')->name('login.2fa.post');
     Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:20,10')->name('register.post');
     Route::get('/register/verify', [AuthController::class, 'verifyForm'])->name('register.verify');
-    Route::post('/register/verify', [AuthController::class, 'verify'])->name('register.verify.post');
-    Route::post('/register/resend', [AuthController::class, 'resend'])->name('register.resend');
+    Route::post('/register/verify', [AuthController::class, 'verify'])->middleware('throttle:30,10')->name('register.verify.post');
+    Route::post('/register/resend', [AuthController::class, 'resend'])->middleware('throttle:6,10')->name('register.resend');
+});
+
+// Xodim ofertani qabul qilish (kirgandan keyin majburiy)
+Route::middleware('auth')->group(function () {
+    Route::get('/offer/accept', [\App\Http\Controllers\OfferAcceptController::class, 'show'])->name('offer.accept');
+    Route::post('/offer/accept', [\App\Http\Controllers\OfferAcceptController::class, 'accept'])->middleware('throttle:20,1')->name('offer.accept.post');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -43,18 +52,23 @@ Route::prefix('k/{slug}')->name('booking.')->group(function () {
 });
 
 // Shaxsiy profil (har bir xodim va super admin uchun)
-Route::middleware('auth')->prefix('account')->name('account.')->group(function () {
+Route::middleware(['auth', 'offer'])->prefix('account')->name('account.')->group(function () {
     $a = \App\Http\Controllers\AccountController::class;
     Route::get('/', [$a, 'edit'])->name('edit');
     Route::put('/', [$a, 'update'])->name('update');
     Route::put('password', [$a, 'password'])->name('password');
     Route::delete('avatar', [$a, 'removeAvatar'])->name('avatar.delete');
+    $t = \App\Http\Controllers\TwoFactorController::class;
+    Route::post('2fa/start', [$t, 'start'])->name('2fa.start');
+    Route::post('2fa/confirm', [$t, 'confirm'])->middleware('throttle:10,1')->name('2fa.confirm');
+    Route::post('2fa/disable', [$t, 'disable'])->name('2fa.disable');
+    Route::post('2fa/recovery', [$t, 'recovery'])->middleware('throttle:5,1')->name('2fa.recovery');
 });
 
 // Bildirishnomalar (klinika xodimlari va super admin) va ilovani o'rnatish (PWA)
 Route::get('/manifest.webmanifest', [\App\Http\Controllers\PwaController::class, 'manifest'])->name('pwa.manifest');
 Route::get('/offline', [\App\Http\Controllers\PwaController::class, 'offline'])->name('pwa.offline');
-Route::middleware('auth')->prefix('notifications')->name('notifications.')->group(function () {
+Route::middleware(['auth', 'offer'])->prefix('notifications')->name('notifications.')->group(function () {
     $n = \App\Http\Controllers\NotificationController::class;
     Route::get('/', [$n, 'index'])->name('index');
     Route::get('feed', [$n, 'feed'])->name('feed');
@@ -82,6 +96,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])
 
     Route::get('offers', [Admin\OfferController::class, 'index'])->name('offers.index');
     Route::post('offers', [Admin\OfferController::class, 'store'])->name('offers.store');
+    Route::put('offers/privacy', [Admin\OfferController::class, 'privacy'])->name('offers.privacy');
     Route::post('offers/{offer}/activate', [Admin\OfferController::class, 'activate'])->name('offers.activate');
 
     Route::get('patients', [Admin\PatientController::class, 'index'])->name('patients.index');
@@ -100,7 +115,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])
 });
 
 // ---------- Klinika paneli ----------
-Route::prefix('app')->name('app.')->middleware(['auth', 'clinic'])->group(function () {
+Route::prefix('app')->name('app.')->middleware(['auth', 'offer', 'clinic'])->group(function () {
     Route::get('/', [AppC\DashboardController::class, 'index'])->name('dashboard');
     Route::get('search', AppC\GlobalSearchController::class)->name('search');
     Route::post('impersonate/stop', [Admin\ClinicController::class, 'stopImpersonate'])->name('impersonate.stop');

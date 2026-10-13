@@ -1,0 +1,57 @@
+MAXFIYLIK SIYOSATI
+{{APP}} tizimida ma'lumotlarni qayta ishlash tartibi
+
+Oxirgi yangilanish: {{DATE}}
+
+1. UMUMIY
+1.1. Ushbu siyosat {{COMPANY}} (keyingi o'rinlarda — Ijrochi) {{APP}} tizimida qanday ma'lumotlarni, qanday maqsadda va qanday himoya bilan qayta ishlashini bayon etadi. U Ommaviy ofertaning ajralmas qismi.
+1.2. Siyosat O'zbekiston Respublikasining "Shaxsiy ma'lumotlar to'g'risida"gi Qonuni va boshqa amaldagi qonunchilikka muvofiq tuzilgan.
+
+2. IKKI TURDAGI MA'LUMOT VA TOMONLARNING ROLI
+2.1. Klinika (Buyurtmachi) va xodimlar ma'lumotlari. Ijrochi ularni o'zi belgilagan maqsadlarda qayta ishlaydi (Ijrochi — shaxsiy ma'lumotlar egasi/operatori).
+2.2. Bemorlar ma'lumotlari. Buyurtmachi Tizimga kiritadi. Bu ma'lumotlar bo'yicha egasi/operator Buyurtmachi, Ijrochi esa uning topshirig'i bilan ma'lumotlarni qayta ishlovchi hisoblanadi.
+
+3. QANDAY MA'LUMOTLAR QAYTA ISHLANADI
+3.1. Buyurtmachi va xodimlar: F.I.Sh., telefon, e-pochta, lavozim/rol, klinika nomi va rekvizitlari, kirish vaqti va IP-manzil, qurilma (brauzer) ma'lumoti, rozilik yozuvlari, to'lov va balans tarixi, harakatlar jurnali.
+3.2. Bemorlar (Buyurtmachi kiritadi): F.I.Sh., tug'ilgan sana, jinsi, telefon, manzil, JSHSHIR, tibbiy karta, tashriflar, tahlillar, retseptlar, hisob-fakturalar va to'lovlar, bemor fotosuratlari.
+3.3. Onlayn navbatga yozilgan bemorlar: F.I.Sh., telefon, tug'ilgan sana, tanlangan xizmat va vaqt, to'lov holati, rozilik vaqti va IP-manzil.
+3.4. Texnik ma'lumotlar: xizmat ko'rsatish, xavfsizlik va xatolarni tuzatish uchun so'rovlar statistikasi va xatolar jurnali.
+
+4. QAYTA ISHLASH MAQSADLARI
+4.1. Tizim xizmatini ko'rsatish va akkauntlarni yuritish.
+4.2. Obuna, to'lov va hisob-kitoblarni amalga oshirish.
+4.3. Foydalanuvchini aniqlash, xavfsizlikni ta'minlash, firibgarlik va ruxsatsiz kirishning oldini olish.
+4.4. Texnik qo'llab-quvvatlash, xatolarni bartaraf etish va Tizimni yaxshilash.
+4.5. Qonunchilik talablarini bajarish va nizolarda huquqlarni himoya qilish.
+4.6. Ijrochi ma'lumotlarni reklama maqsadida sotmaydi va uchinchi shaxslarga reklama uchun bermaydi.
+
+5. HUQUQIY ASOS
+5.1. Qayta ishlash shaxsning roziligi, shartnomani bajarish zarurati va qonun talablariga asoslanadi. Bemor ma'lumotlari bo'yicha rozilikni Buyurtmachi Bemordan oladi.
+
+6. MA'LUMOTLARNI UZATISH
+6.1. Ma'lumotlar quyidagilarga uzatilishi mumkin: (a) Buyurtmachi ulagan xizmatlar — SMS provayderi (Eskiz), to'lov tizimi (Payme), JSHSHIR ma'lumot provayderi — faqat ularning ishlashi uchun zarur hajmda; (b) infratuzilma xizmat ko'rsatuvchilari (hosting, zaxira) — maxfiylik majburiyati ostida; (c) qonunda nazarda tutilgan hollarda vakolatli davlat organlariga.
+6.2. Bank kartasi ma'lumotlari Ijrochi tomonidan saqlanmaydi; ular to'lov tizimida qayta ishlanadi.
+6.3. Shaxsiy ma'lumotlarning chet elga uzatilishi faqat qonunchilikda ruxsat etilgan hollarda va talab etilgan shartlar bajarilganda amalga oshiriladi. Ijrochi O'zbekiston fuqarolarining shaxsiy ma'lumotlarini O'zbekiston hududidagi texnik vositalarda saqlashni ta'minlashga harakat qiladi.
+
+7. HIMOYA CHORALARI
+7.1. Klinikalar ma'lumotlarining mantiqiy ajratilishi; rollarga asoslangan kirish; parollarni qaytarib bo'lmaydigan tarzda saqlash; uchinchi tomon kalitlarini shifrlash; harakatlar jurnali; shubhali kirishlarni cheklash; ikki bosqichli autentifikatsiya; HTTPS orqali uzatish; zaxira nusxalash; xavfsizlik sarlavhalari va ichki monitoring.
+7.2. Ma'lumotlar sizib chiqishi aniqlansa, Ijrochi Buyurtmachini 72 soat ichida xabardor qiladi.
+
+8. SAQLASH MUDDATLARI
+8.1. Ma'lumotlar xizmat ko'rsatish davomida saqlanadi. Shartnoma bekor qilinganda yoki Oferta 6.3-bandida nazarda tutilgan holda ma'lumotlar o'chiriladi; zaxira nusxalar ichki muddat tugagach o'chadi.
+8.2. Rozilik yozuvlari, to'lov va harakatlar jurnali huquqiy talablar va nizolarda himoya uchun qonunda yoki Oferta bo'yicha zarur muddat saqlanadi.
+
+9. SUBYEKT HUQUQLARI
+9.1. Har bir shaxs o'z ma'lumotlari haqida ma'lumot olish, ularni tuzatish yoki o'chirishni, roziligini qaytarib olishni va qayta ishlashga e'tiroz bildirishni talab qilishi mumkin.
+9.2. Bemorlar bunday so'rovlar bilan avvalo klinikaga murojaat qiladilar. Klinika xodimlari va Buyurtmachi vakillari so'rovni Ijrochining aloqa manzillariga yuborishlari mumkin.
+9.3. Ijrochi so'rovga qonunda belgilangan muddatda javob beradi.
+
+10. COOKIE FAYLLAR
+10.1. Tizim faqat ishlash uchun zarur (sessiya, xavfsizlik, til va rejim tanlovi) cookie va brauzer xotirasidan foydalanadi. Reklama va kuzatuv cookie-lari ishlatilmaydi.
+
+11. BOLALAR MA'LUMOTLARI
+11.1. Voyaga yetmagan bemorlar ma'lumotlari ularning qonuniy vakillari roziligi bilan Buyurtmachi tomonidan kiritiladi.
+
+12. O'ZGARISHLAR VA ALOQA
+12.1. Siyosat o'zgarsa, yangi versiya Tizimda e'lon qilinadi; muhim o'zgarishlar haqida Foydalanuvchilarga xabar beriladi.
+12.2. Savollar va so'rovlar uchun: {{COMPANY}}, telefon: {{PHONE}}, e-pochta: {{EMAIL}}, manzil: {{ADDRESS}}.

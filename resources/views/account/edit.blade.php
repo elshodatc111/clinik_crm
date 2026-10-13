@@ -78,6 +78,60 @@
             </div>
             <button class="btn btn-primary"><x-icon name="lock" class="w-4 h-4" />{{ __('Parolni yangilash') }}</button>
         </form>
+
+        {{-- Ikki bosqichli tasdiqlash --}}
+        @php($tf = \App\Http\Controllers\TwoFactorController::setupData(request()))
+        <div class="card p-6 space-y-4" id="twofactor">
+            <div class="flex items-center justify-between gap-3">
+                <div class="font-semibold flex items-center gap-2"><x-icon name="shield" class="w-4 h-4 text-brand" />{{ __('Ikki bosqichli tasdiqlash (2FA)') }}</div>
+                @if($u->hasTwoFactor())<x-badge color="green">{{ __('Yoqilgan') }}</x-badge>@else<x-badge color="amber">{{ __("O'chiq") }}</x-badge>@endif
+            </div>
+            <p class="text-sm text-slate-500">{{ __("Kirishda paroldan tashqari autentifikator ilovasidagi (Google Authenticator, Authy va h.k.) 6 xonali kod so'raladi. Parol o'g'irlansa ham akkaunt himoyalangan bo'ladi.") }}@if($u->isSuper() || $u->isDirector()) <b>{{ __('Direktor va Super Admin uchun qat\'iy tavsiya etiladi.') }}</b>@endif</p>
+            @if($errors->twofactor->any())
+                <div class="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"><ul class="list-disc pl-5">@foreach($errors->twofactor->all() as $e)<li>{{ $e }}</li>@endforeach</ul></div>
+            @endif
+            @if(session('recovery'))
+                <div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                    <div class="text-sm font-semibold text-amber-900 mb-2">{{ __('Zaxira kodlar (har biri bir marta ishlaydi). Hozir saqlab oling — qayta ko\'rsatilmaydi:') }}</div>
+                    <div class="grid grid-cols-2 gap-1 font-mono text-sm">@foreach(session('recovery') as $rc)<span>{{ $rc }}</span>@endforeach</div>
+                </div>
+            @endif
+            @if($u->hasTwoFactor())
+                <div class="grid md:grid-cols-2 gap-4">
+                    <form method="POST" action="{{ route('account.2fa.recovery') }}" class="space-y-2">@csrf
+                        <label class="block text-sm font-medium">{{ __('Yangi zaxira kodlar') }}</label>
+                        <input type="password" name="password" class="input" placeholder="{{ __('Joriy parol') }}" required>
+                        <button class="btn btn-sm">{{ __('Kodlarni yangilash') }}</button>
+                    </form>
+                    <form method="POST" action="{{ route('account.2fa.disable') }}" class="space-y-2">@csrf
+                        <label class="block text-sm font-medium">{{ __("2FA ni o'chirish") }}</label>
+                        <input type="password" name="password" class="input" placeholder="{{ __('Joriy parol') }}" required>
+                        <button class="btn btn-sm !text-red-600">{{ __("O'chirish") }}</button>
+                    </form>
+                </div>
+            @elseif($tf)
+                <div class="grid sm:grid-cols-[180px_1fr] gap-5 items-start">
+                    <div id="qr2fa" class="h-44 w-44 bg-white p-2 rounded-lg border border-slate-200 grid place-items-center text-xs text-slate-400"></div>
+                    <div class="space-y-3 text-sm">
+                        <div>{{ __('1. Autentifikator ilovasida QR kodni skanerlang yoki kalitni qo\'lda kiriting:') }}</div>
+                        <div class="font-mono text-sm break-all rounded bg-slate-100 px-3 py-2 select-all">{{ $tf['secret'] }}</div>
+                        <form method="POST" action="{{ route('account.2fa.confirm') }}" class="space-y-2">@csrf
+                            <label class="block font-medium">{{ __('2. Ilovadagi 6 xonali kodni kiriting:') }}</label>
+                            <input name="code" class="input max-w-[12rem]" inputmode="numeric" autocomplete="one-time-code" maxlength="10" required>
+                            <div><button class="btn btn-primary btn-sm">{{ __('Tasdiqlash va yoqish') }}</button></div>
+                        </form>
+                    </div>
+                </div>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+                <script>
+                    (function () {
+                        try { var q = qrcode(0, 'M'); q.addData(@js($tf['uri'])); q.make(); document.getElementById('qr2fa').innerHTML = q.createImgTag(4, 0); } catch (e) {}
+                    })();
+                </script>
+            @else
+                <form method="POST" action="{{ route('account.2fa.start') }}">@csrf<button class="btn btn-primary btn-sm"><x-icon name="shield" class="w-4 h-4" />{{ __('Yoqish') }}</button></form>
+            @endif
+        </div>
     </div>
 </div>
 @endsection

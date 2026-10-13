@@ -53,6 +53,7 @@
                 <a class="block hover:text-white" href="{{ route('landing') }}#features">{{ __('Imkoniyatlar') }}</a>
                 <a class="block hover:text-white" href="{{ route('landing') }}#pricing">{{ __('Tariflar') }}</a>
                 <a class="block hover:text-white" href="{{ route('offer') }}">{{ __('Ommaviy oferta') }}</a>
+                <a class="block hover:text-white" href="{{ route('privacy') }}">{{ __('Maxfiylik siyosati') }}</a>
                 <a class="block hover:text-white" href="{{ route('login') }}">{{ __('Kirish') }}</a>
             </div>
         </div>

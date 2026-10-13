@@ -70,7 +70,7 @@ class BookingController extends Controller
             'service' => 'required|integer', 'doctor' => 'required|integer', 'date' => 'required|date', 'time' => ['required', 'regex:/^\d{2}:\d{2}$/'],
             'last_name' => 'required|string|max:100', 'first_name' => 'required|string|max:100', 'middle_name' => 'nullable|string|max:100',
             'birth_date' => 'nullable|date|before_or_equal:today', 'phone' => ['required', 'string', 'regex:/^\+?[0-9\s\-\(\)]{9,20}$/'],
-            'pinfl' => ['nullable', 'digits:14'], 'accept' => 'accepted',
+            'pinfl' => ['nullable', 'digits:14'], 'accept' => 'accepted', 'accept_privacy' => 'accepted',
         ]);
         $service = BookingService::services($c)->firstWhere('id', (int) $d['service']);
         $doctor = $service ? BookingService::doctorsFor($c, $service)->firstWhere('id', (int) $d['doctor']) : null;

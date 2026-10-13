@@ -23,6 +23,11 @@ class LandingController extends Controller
         return view('public.offer', ['offer' => Offer::active()]);
     }
 
+    public function privacy()
+    {
+        return view('legal.privacy', ['text' => \App\Support\Legal::privacy()]);
+    }
+
     public function lang(Request $request, string $locale)
     {
         abort_unless(in_array($locale, ['uz', 'ru'], true), 404);

@@ -42,7 +42,7 @@ class ClinicController extends Controller
             'owner_name' => 'required|string|max:150',
             'phone' => ['required', 'string', 'regex:/^\+?[0-9\s\-\(\)]{9,20}$/'],
             'email' => 'nullable|email|max:150|unique:users,email',
-            'password' => 'required|string|min:8',
+            'password' => ['required', 'string', 'max:100', new \App\Rules\StrongPassword],
             'status' => 'required|in:trial,active',
         ]);
         $phone = SmsService::normalize($d['phone']);
@@ -164,6 +164,7 @@ class ClinicController extends Controller
     public function impersonate(Request $r, Clinic $clinic)
     {
         session(['impersonate_clinic_id' => $clinic->id]);
+        \App\Models\AuditLog::record('impersonate', null, $clinic->id, ['clinic' => $clinic->name]);
 
         return redirect()->route('app.dashboard');
     }
@@ -172,6 +173,9 @@ class ClinicController extends Controller
     {
         $id = session('impersonate_clinic_id');
         session()->forget('impersonate_clinic_id');
+        if ($id) {
+            \App\Models\AuditLog::record('impersonate_end', null, (int) $id);
+        }
 
         return $id ? redirect()->route('admin.clinics.show', $id) : redirect()->route('admin.dashboard');
     }

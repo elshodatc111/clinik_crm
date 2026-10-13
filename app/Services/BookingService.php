@@ -183,7 +183,7 @@ class BookingService
                 'last_name' => $p['last_name'], 'first_name' => $p['first_name'], 'middle_name' => $p['middle_name'] ?? null,
                 'birth_date' => $p['birth_date'] ?? null, 'phone' => SmsService::normalize($p['phone']), 'pinfl' => ($p['pinfl'] ?? null) ?: null,
                 'status' => 'pending', 'hold_expires_at' => now()->addMinutes((int) static::cfg($c, 'online_hold_min')),
-                'offer_accepted_at' => now(), 'offer_hash' => sha1(static::offerText($c)), 'ip' => $ip, 'locale' => in_array($locale, ['uz', 'ru'], true) ? $locale : 'uz',
+                'offer_accepted_at' => now(), 'privacy_accepted_at' => now(), 'offer_hash' => sha1(static::offerText($c)), 'ip' => $ip, 'locale' => in_array($locale, ['uz', 'ru'], true) ? $locale : 'uz',
             ]);
         });
     }

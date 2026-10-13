@@ -7,6 +7,7 @@
         <div class="font-semibold mb-4">{{ __('Brend') }}</div>
         <div class="grid md:grid-cols-2 gap-4">
             <x-field name="app_name" :label="__('Dastur nomi')" :value="$s['app_name'] ?? 'Klinika CRM'" required />
+            <x-field name="company_name" :label="__('Kompaniya (Ijrochi) rasmiy nomi — oferta uchun')" :value="$s['company_name'] ?? ''" :hint="__('Masalan: «NOM» MChJ, STIR ... Oferta va maxfiylik siyosatida ko\'rsatiladi.')" span="2" />
             <x-field name="primary_color" type="color" :label="__('Asosiy rang')" :value="$s['primary_color'] ?? '#1d4ed8'" required />
             <div>
                 <x-field name="logo" type="file" :label="__('Logotip')" attrs='accept="image/*"' />

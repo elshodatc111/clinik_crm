@@ -19,6 +19,7 @@ abstract class ClinicTestCase extends TestCase
             throw new \RuntimeException("Testlar faqat sqlite (:memory:) bilan ishlashi kerak. phpunit.xml ni tekshiring.");
         }
         parent::setUp();
+        config(['legal.enforce_staff_offer' => false]); // oferta majburiyligi alohida testlarda sinaladi
         $this->seed(DatabaseSeeder::class);
     }
 
