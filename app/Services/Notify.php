@@ -15,6 +15,12 @@ class Notify
         return User::withoutGlobalScopes()->where('clinic_id', $clinicId)->where('role', 'clinic_admin')->where('is_active', true)->pluck('id')->all();
     }
 
+    /** Barcha faol Super Adminlar. */
+    public static function superAdmins(): array
+    {
+        return User::withoutGlobalScopes()->where('role', 'super_admin')->where('is_active', true)->pluck('id')->all();
+    }
+
     /** Berilgan rollarga ega xodimlar (asosiy yoki qo'shimcha rol) + admin/direktorlar. */
     public static function roles(int $clinicId, array $roles, bool $withAdmins = true): array
     {

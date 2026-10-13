@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SettingController extends Controller
 {
-    protected array $plain = ['app_name', 'company_name', 'primary_color', 'support_phone', 'support_phone2', 'support_email', 'contact_address', 'contact_hours', 'contact_telegram', 'contact_instagram', 'contact_map_url', 'setup_fee', 'demo_days', 'demo_grace_days', 'eskiz_email', 'eskiz_from', 'payme_merchant_id'];
+    protected array $plain = ['app_name', 'company_name', 'primary_color', 'support_phone', 'support_phone2', 'support_email', 'contact_address', 'contact_hours', 'contact_telegram', 'contact_instagram', 'contact_map_url', 'card_holder', 'card_bank', 'card_note', 'setup_fee', 'demo_days', 'demo_grace_days', 'eskiz_email', 'eskiz_from', 'payme_merchant_id'];
 
     protected array $secret = ['eskiz_password', 'payme_key', 'payme_test_key'];
 
@@ -32,6 +32,15 @@ class SettingController extends Controller
             'contact_telegram' => 'nullable|string|max:120',
             'contact_instagram' => 'nullable|string|max:120',
             'contact_map_url' => ['nullable', 'url', 'max:600', 'regex:/^https:\/\//'],
+            'card_number' => ['nullable', 'string', 'max:30', function ($a, $v, $fail) {
+                $n = preg_replace('/\D/', '', (string) $v);
+                if ($n !== '' && strlen($n) !== 16) {
+                    $fail(__("Karta raqami 16 ta raqamdan iborat bo'lishi kerak."));
+                }
+            }],
+            'card_holder' => 'nullable|string|max:100',
+            'card_bank' => 'nullable|string|max:60',
+            'card_note' => 'nullable|string|max:300',
             'setup_fee' => 'required|integer|min:0',
             'demo_days' => 'required|integer|min:1|max:90',
             'demo_grace_days' => 'required|integer|min:0|max:30',
@@ -52,6 +61,8 @@ class SettingController extends Controller
                 Setting::set($k, $d[$k]);
             }
         }
+        Setting::set('card_number', preg_replace('/\D/', '', (string) ($d['card_number'] ?? '')));
+        Setting::set('card_enabled', $r->boolean('card_enabled') ? '1' : '0');
         Setting::set('payme_test_mode', $r->boolean('payme_test_mode') ? '1' : '');
 
         if ($r->boolean('remove_logo') && Setting::get('logo_path')) {

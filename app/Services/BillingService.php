@@ -24,7 +24,7 @@ class BillingService
     public const TENANT_TABLES = [
         'lab_orders', 'payments', 'invoice_items', 'invoices', 'prescriptions', 'visits',
         'appointments', 'services', 'patients', 'balance_transactions', 'topup_orders', 'clinic_status_logs',
-        'credit_applications', 'patient_photos', 'payrolls', 'payroll_adjustments', 'cash_movements', 'cash_closings', 'online_bookings', 'pinfl_lookups',
+        'credit_applications', 'patient_photos', 'payrolls', 'payroll_adjustments', 'cash_movements', 'cash_closings', 'online_bookings', 'pinfl_lookups', 'manual_payments',
     ];
 
     public static function appName(): string
@@ -105,7 +105,7 @@ class BillingService
             $c->save();
             static::changeStatus($c, Clinic::ACTIVE, "Ulanish to'lovi to'landi");
         });
-        SmsService::send($c->phone, static::appName().": obuna faollashtirildi. Birinchi oy bepul. Rahmat!", $c->id);
+        PlatformSms::send('subscribed', $c->phone, [], $c->id);
 
         return null;
     }
@@ -140,16 +140,16 @@ class BillingService
         $due = in_array($c->status, [Clinic::VIEW_ONLY, Clinic::BLOCKED], true)
             || ($c->status === Clinic::ACTIVE && $c->paid_until && $c->paid_until->lessThanOrEqualTo(now()));
         if ($due && static::renew($c)) {
-            SmsService::send($c->phone, static::appName().': obuna uzaytirildi. Rahmat!', $c->id);
+            PlatformSms::send('renewed', $c->phone, [], $c->id);
         }
     }
 
-    protected static function notice(Clinic $c, string $key, string $text): void
+    protected static function notice(Clinic $c, string $key, string $event, array $vars = []): void
     {
         if ($c->last_notice_key === $key) {
             return;
         }
-        SmsService::send($c->phone, $text, $c->id);
+        PlatformSms::send($event, $c->phone, $vars, $c->id);
         $c->last_notice_key = $key;
         $c->saveQuietly();
     }
@@ -175,14 +175,14 @@ class BillingService
         switch ($c->status) {
             case Clinic::TRIAL:
                 if ($c->trial_ends_at && $now->greaterThan($c->trial_ends_at->copy()->addDays($grace))) {
-                    SmsService::send($c->phone, "{$app}: demo muddati tugadi va obuna olinmagani uchun barcha ma'lumotlaringiz o'chirildi.", $c->id);
+                    PlatformSms::send('trial_purged', $c->phone, [], $c->id);
                     static::purge($c, 'demo muddati tugadi', false);
 
                     return;
                 }
                 $days = $c->trialDaysLeft();
                 if (in_array($days, [7, 3, 1], true)) {
-                    static::notice($c, "trial{$days}", "{$app}: demo versiya tugashiga {$days} kun qoldi. Obunaga o'tmasangiz ma'lumotlar o'chiriladi.");
+                    static::notice($c, "trial{$days}", 'trial_warn', ['days' => $days]);
                 }
                 break;
 
@@ -190,12 +190,12 @@ class BillingService
                 if ($c->paid_until && $c->paid_until->lessThanOrEqualTo($now)) {
                     if (! static::renew($c)) {
                         static::changeStatus($c, Clinic::VIEW_ONLY, "Oylik to'lov to'lanmadi");
-                        static::notice($c, 'viewonly', "{$app}: oylik to'lov to'lanmadi. Tizim faqat ko'rish rejimiga o'tdi. Balansni to'ldiring.");
+                        static::notice($c, 'viewonly', 'view_only');
                     }
                 } elseif ($c->paid_until) {
                     $left = static::daysUntil($c->paid_until);
                     if ($left <= 3 && $left >= 0 && $c->balance < static::monthlyPrice($c)) {
-                        static::notice($c, "low{$left}", "{$app}: obuna tugashiga {$left} kun qoldi, balansda mablag' yetarli emas. Balansni to'ldiring.");
+                        static::notice($c, "low{$left}", 'low_balance', ['days' => $left]);
                     }
                 }
                 break;
@@ -206,7 +206,7 @@ class BillingService
                 }
                 if ($c->paid_until && $now->greaterThanOrEqualTo($c->paid_until->copy()->addDays(static::VIEW_ONLY_DAYS))) {
                     static::changeStatus($c, Clinic::BLOCKED, "3-oy yakunigacha to'lanmadi");
-                    static::notice($c, 'blocked', "{$app}: klinikangiz bloklandi. 30 kundan keyin barcha ma'lumotlaringiz o'chiriladi. To'lovni amalga oshiring.");
+                    static::notice($c, 'blocked', 'blocked');
                 }
                 break;
 
@@ -218,10 +218,10 @@ class BillingService
                 if ($purgeAt) {
                     $left = static::daysUntil($purgeAt);
                     if (in_array($left, [14, 7, 1], true)) {
-                        static::notice($c, "purge{$left}", "{$app}: {$left} kundan keyin barcha ma'lumotlaringiz o'chiriladi. To'lovni amalga oshiring.");
+                        static::notice($c, "purge{$left}", 'purge_warn', ['days' => $left]);
                     }
                     if ($now->greaterThanOrEqualTo($purgeAt) && ! $c->hold_deletion) {
-                        SmsService::send($c->phone, "{$app}: to'lov qilinmagani uchun shartnoma bekor qilindi va ma'lumotlaringiz o'chirildi.", $c->id);
+                        PlatformSms::send('purged', $c->phone, [], $c->id);
                         static::purge($c, "to'lanmagan, 30 kun blok", true);
                     }
                 }

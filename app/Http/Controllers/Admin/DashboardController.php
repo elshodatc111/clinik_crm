@@ -28,6 +28,7 @@ class DashboardController extends Controller
             'chartLabels' => $chartLabels, 'chartTopups' => $chartTopups,
             'byStatus' => $byStatus,
             'total' => Clinic::count(),
+            'pendingPayments' => \App\Services\ManualPaymentService::pendingCount(),
             'mrr' => $mrr,
             'new30' => Clinic::where('created_at', '>=', now()->subDays(30))->count(),
             'topups30' => BalanceTransaction::where('type', 'topup')->where('created_at', '>=', now()->subDays(30))->sum('amount'),

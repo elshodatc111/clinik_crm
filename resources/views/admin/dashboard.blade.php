@@ -6,6 +6,12 @@
     $hex = ['trial' => '#2563eb', 'active' => '#22c55e', 'view_only' => '#f97316', 'blocked' => '#ef4444', 'suspended' => '#94a3b8'];
     $icons = ['trial' => 'flask', 'active' => 'check', 'view_only' => 'eye', 'blocked' => 'shield', 'suspended' => 'clock'];
 @endphp
+@if($pendingPayments > 0)
+<a href="{{ route('admin.payments.index') }}" class="mb-4 flex items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-900 hover:bg-amber-100 transition">
+    <span class="flex items-center gap-2 font-medium"><x-icon name="receipt" class="w-5 h-5" />{{ __("Tekshirilmagan to'lov cheklari: :n ta", ['n' => $pendingPayments]) }}</span>
+    <span class="text-sm">{{ __("Ko'rib chiqish") }} &rarr;</span>
+</a>
+@endif
 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
     <x-stat icon="building" tone="blue" :label="__('Jami klinikalar')" :value="$total" />
     <x-stat icon="trending-up" tone="green" :label="__('Oylik tushum (MRR)')" :value="money($mrr)" />

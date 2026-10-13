@@ -3,16 +3,16 @@
 use Illuminate\Support\Facades\Schedule;
 
 // Har kuni tunda: obuna, demo, bloklash va o'chirish jarayonlari
-Schedule::command('billing:run')->dailyAt('02:00');
+Schedule::command('billing:run')->dailyAt('02:00')->name('billing:run');
 
 // Har 10 daqiqada: qabul eslatmalari (klinikaning o'z Eskiz akkaunti orqali)
-Schedule::command('reminders:send')->everyTenMinutes();
+Schedule::command('reminders:send')->everyTenMinutes()->name('reminders:send');
 
 // Har daqiqada: to'lanmagan onlayn bronlarni bo'shatish
 Schedule::call(fn () => \App\Services\BookingService::expireStale())->everyMinute()->name('bookings:expire');
 
 // Har kuni ertalab: klinikalar kamchiliklari bo'yicha ilova ichidagi xabarlar
-Schedule::command('clinics:diagnose')->dailyAt('09:00');
+Schedule::command('clinics:diagnose')->dailyAt('09:00')->name('clinics:diagnose');
 
 // Har kuni tunda: ma'lumotlar bazasi zaxira nusxasi (14 kun saqlanadi)
-Schedule::command('db:backup')->dailyAt('03:00');
+Schedule::command('db:backup')->dailyAt('03:00')->name('db:backup');

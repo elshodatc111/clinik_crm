@@ -56,6 +56,7 @@ class Menu
                 ['admin.dashboard', 'Bosh sahifa', $all, 'home'],
                 ['admin.clinics.index', 'Klinikalar', $all, 'building'],
                 ['admin.plans.index', 'Tariflar', $all, 'layers'],
+                ['admin.payments.index', "To'lov cheklari (karta)", $all, 'receipt'],
                 ['admin.transactions.index', "To'lovlar va balans", $all, 'credit-card'],
                 ['admin.system.index', 'Tizim holati', $all, 'activity'],
                 ['admin.diagnostics.index', 'Klinikalar kamchiliklari', $all, 'alert'],
@@ -68,6 +69,7 @@ class Menu
             ]],
             ['key' => 'log', 'label' => 'Jurnal', 'icon' => 'history', 'open' => false, 'items' => [
                 ['admin.audit.index', 'Harakatlar jurnali', $all, 'history'],
+                ['admin.sms.platform.index', 'SMS matnlari', $all, 'message'],
                 ['admin.sms.index', 'SMS jurnali', $all, 'message'],
             ]],
         ];

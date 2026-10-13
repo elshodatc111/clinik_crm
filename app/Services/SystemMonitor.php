@@ -132,12 +132,34 @@ class SystemMonitor
         $op = function_exists('opcache_get_status') && ini_get('opcache.enable');
         $out[] = ['opcache', 'OPcache', $op ? 'ok' : 'warn', $op ? 'Yoqilgan' : "O'chiq", $op ? '' : 'Yoqilsa, sayt tezroq ishlaydi'];
 
-        // Navbat
+        // Scheduler (cron) va fon vazifalari
+        $sch = TaskMonitor::scheduler();
+        $out[] = ['cron', 'Scheduler (cron)', $sch['status'], $sch['age'] === null ? 'Hali ishga tushmagan' : TaskMonitor::ago($sch['age']), $sch['status'] === 'ok' ? 'Har daqiqa ishlayapti' : 'cPanel → Cron Jobs: schedule:run qo\'shing'];
+        $rows = collect(TaskMonitor::rows());
+        $badTasks = $rows->where('status', 'bad')->pluck('label')->all();
+        $warnTasks = $rows->where('status', 'warn')->pluck('label')->all();
+        $okCount = $rows->where('status', 'ok')->count();
+        $out[] = ['tasks', 'Fon vazifalari', $badTasks ? 'bad' : ($warnTasks ? 'warn' : 'ok'), $okCount.' / '.$rows->count().' ishlayapti', implode(', ', array_merge($badTasks, $warnTasks))];
+
+        // Navbat (queue worker)
         try {
-            if (config('queue.default') !== 'sync' && Schema::hasTable('jobs')) {
+            if (config('queue.default') === 'sync') {
+                $out[] = ['queue', 'Navbat (queue worker)', 'ok', 'Kerak emas', 'Ishlar darhol bajariladi (sync)'];
+            } elseif (Schema::hasTable('jobs')) {
                 $pending = DB::table('jobs')->count();
                 $failed = Schema::hasTable('failed_jobs') ? DB::table('failed_jobs')->count() : 0;
-                $out[] = ['queue', 'Navbat (queue)', $failed > 0 ? 'warn' : ($pending > 200 ? 'warn' : 'ok'), $pending.' kutmoqda', $failed.' xato'];
+                $oldest = DB::table('jobs')->min('created_at');
+                $stuck = $oldest && (time() - (int) $oldest) > 300; // 5 daqiqadan beri bajarilmagan ish — worker ishlamayapti
+                $out[] = ['queue', 'Navbat (queue worker)', $stuck ? 'bad' : ($failed > 0 || $pending > 200 ? 'warn' : 'ok'), $stuck ? 'Worker ishlamayapti' : $pending.' kutmoqda', $failed.' xato · php artisan queue:work'];
+            }
+        } catch (\Throwable $e) {
+        }
+
+        // Kartaga to'lov cheklari
+        try {
+            $pp = \App\Services\ManualPaymentService::pendingCount();
+            if ($pp > 0) {
+                $out[] = ['pay_pending', "Tekshirilmagan to'lov cheklari", $pp > 5 ? 'warn' : 'ok', $pp.' ta', "To'lov cheklari (karta) bo'limida"];
             }
         } catch (\Throwable $e) {
         }

@@ -19,6 +19,19 @@ class AppServiceProvider extends ServiceProvider
         config(['app.timezone' => 'Asia/Tashkent']);
         date_default_timezone_set('Asia/Tashkent');
 
+        // Scheduler vazifalari oxirgi ishga tushish vaqtini yozib borish (Tizim holati uchun)
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Console\Events\ScheduledTaskFinished::class, function ($e) {
+            if ($name = \App\Services\TaskMonitor::nameOf($e->task)) {
+                $code = $e->task->exitCode ?? 0;
+                \App\Services\TaskMonitor::record($name, (int) $code === 0, (int) round($e->runtime * 1000), (int) $code === 0 ? null : 'Chiqish kodi: '.$code);
+            }
+        });
+        \Illuminate\Support\Facades\Event::listen(\Illuminate\Console\Events\ScheduledTaskFailed::class, function ($e) {
+            if ($name = \App\Services\TaskMonitor::nameOf($e->task)) {
+                \App\Services\TaskMonitor::record($name, false, 0, $e->exception->getMessage());
+            }
+        });
+
         View::composer('*', function ($view) {
             static $brand = null;
             if ($brand === null) {

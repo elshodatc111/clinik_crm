@@ -83,6 +83,28 @@ class SmsEvents
         return trim(strtr($text, $map));
     }
 
+    /** Jurnalda hodisa nomi: klinika hodisalari, platforma xabarlari (p_*), kod va sinov. */
+    public static function label(?string $event): string
+    {
+        if (! $event) {
+            return '';
+        }
+        if (isset(static::all()[$event])) {
+            return __(static::all()[$event]['label']);
+        }
+        if ($event === 'otp') {
+            return __('Tasdiqlash kodi');
+        }
+        if ($event === 'test') {
+            return __('Sinov');
+        }
+        if (str_starts_with($event, 'p_') && isset(\App\Services\PlatformSms::all()[substr($event, 2)])) {
+            return __(\App\Services\PlatformSms::all()[substr($event, 2)]['label']);
+        }
+
+        return $event;
+    }
+
     public static function statusLabel(string $s): string
     {
         return ['draft' => 'Yuborilmagan', 'moderation' => 'Eskiz tekshirmoqda', 'approved' => 'Tasdiqlangan', 'rejected' => 'Rad etilgan'][$s] ?? $s;

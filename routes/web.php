@@ -105,6 +105,25 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])
     Route::get('transactions', [Admin\TransactionController::class, 'index'])->name('transactions.index');
     Route::get('audit', [Admin\AuditController::class, 'index'])->name('audit.index');
     Route::get('sms', [Admin\SmsController::class, 'index'])->name('sms.index');
+    // Platforma SMS matnlari
+    Route::prefix('sms-matnlari')->name('sms.platform.')->group(function () {
+        $s = Admin\PlatformSmsController::class;
+        Route::get('/', [$s, 'index'])->name('index');
+        Route::post('settings', [$s, 'settings'])->name('settings');
+        Route::post('connection', [$s, 'connection'])->name('connection');
+        Route::post('test', [$s, 'test'])->middleware('throttle:10,1')->name('test');
+        Route::post('{event}', [$s, 'save'])->name('save');
+        Route::post('{event}/submit', [$s, 'submit'])->name('submit');
+        Route::post('{event}/check', [$s, 'check'])->name('check');
+        Route::post('{event}/mark', [$s, 'mark'])->name('mark');
+        Route::post('{event}/reset', [$s, 'reset'])->name('reset');
+    });
+    // Kartaga qo'lda to'lovlar (cheklar)
+    Route::get('payments', [Admin\ManualPaymentController::class, 'index'])->name('payments.index');
+    Route::get('payments/{payment}/receipt', [Admin\ManualPaymentController::class, 'receipt'])->name('payments.receipt');
+    Route::post('payments/{payment}/approve', [Admin\ManualPaymentController::class, 'approve'])->name('payments.approve');
+    Route::post('payments/{payment}/reject', [Admin\ManualPaymentController::class, 'reject'])->name('payments.reject');
+    Route::post('system/run/{task}', [Admin\SystemController::class, 'run'])->middleware('throttle:6,1')->name('system.run');
     Route::get('system', [Admin\SystemController::class, 'index'])->name('system.index');
     Route::get('notifications', [Admin\BroadcastController::class, 'index'])->name('notifications.index');
     Route::post('notifications', [Admin\BroadcastController::class, 'send'])->name('notifications.send');
@@ -125,6 +144,9 @@ Route::prefix('app')->name('app.')->middleware(['auth', 'offer', 'clinic'])->gro
         Route::get('billing', [AppC\BillingController::class, 'index'])->name('billing');
         Route::post('billing/topup', [AppC\BillingController::class, 'topup'])->name('billing.topup');
         Route::post('billing/subscribe', [AppC\BillingController::class, 'subscribe'])->name('billing.subscribe');
+        Route::post('billing/manual', [AppC\BillingController::class, 'manualStore'])->middleware('throttle:10,60')->name('billing.manual');
+        Route::get('billing/manual/{payment}/receipt', [AppC\BillingController::class, 'manualReceipt'])->name('billing.manual.receipt');
+        Route::delete('billing/manual/{payment}', [AppC\BillingController::class, 'manualCancel'])->name('billing.manual.cancel');
         Route::get('export/patients', [AppC\ExportController::class, 'patients'])->name('export.patients');
     });
 

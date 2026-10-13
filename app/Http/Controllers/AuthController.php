@@ -10,6 +10,7 @@ use App\Models\OfferAcceptance;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\BillingService;
+use App\Services\PlatformSms;
 use App\Services\SmsService;
 use App\Services\Totp;
 use Carbon\Carbon;
@@ -297,7 +298,7 @@ class AuthController extends Controller
             'phone' => $phone, 'code' => Hash::make($code), 'expires_at' => now()->addMinutes(5),
             'attempts' => 0, 'created_at' => now(), 'updated_at' => now(),
         ]);
-        $sent = SmsService::send($phone, 'Tasdiqlash kodi: '.$code.'. '.BillingService::appName(), null, false, 'otp');
+        $sent = PlatformSms::send('otp', $phone, ['code' => $code]);
         if (! $sent && config('app.debug')) {
             session()->flash('dev_code', $code); // faqat test rejimida (APP_DEBUG=true va Eskiz sozlanmagan)
         }

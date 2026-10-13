@@ -55,6 +55,18 @@
     </div>
 
     <div class="card p-6">
+        <div class="font-semibold mb-1">{{ __("Kartaga to'lov (qo'lda tasdiqlanadigan)") }}</div>
+        <p class="text-xs text-slate-500 mb-4">{{ __("Klinikalar obuna uchun shu kartaga pul o'tkazib, chekni yuboradi. Siz chekni tekshirib tasdiqlaysiz yoki sabab bilan bekor qilasiz. Payme ulangan bo'lsa ham ikkala usul ishlaydi.") }}</p>
+        <div class="grid md:grid-cols-2 gap-4">
+            <x-field name="card_number" :label="__('Karta raqami (16 xonali)')" :value="\App\Services\ManualPaymentService::cardFormatted()" placeholder="8600 0000 0000 0000" attrs='inputmode="numeric" autocomplete="off"' />
+            <x-field name="card_holder" :label="__('Karta egasi (F.I.Sh.)')" :value="$s['card_holder'] ?? ''" />
+            <x-field name="card_bank" :label="__('Bank / karta turi')" :value="$s['card_bank'] ?? ''" placeholder="Uzcard / Humo" />
+            <x-field name="card_note" :label="__('Klinikaga ko\'rsatma (ixtiyoriy)')" :value="$s['card_note'] ?? ''" :hint="__('Masalan: To\'lov izohiga klinika nomini yozing.')" />
+            <x-field name="card_enabled" type="checkbox" :label="__('Kartaga to\'lovni yoqish')" :value="($s['card_enabled'] ?? '1') !== '0'" />
+        </div>
+    </div>
+
+    <div class="card p-6">
         <div class="font-semibold mb-4">{{ __('Eskiz.uz (SMS)') }}</div>
         <div class="grid md:grid-cols-3 gap-4">
             <x-field name="eskiz_email" :label="__('Eskiz email')" :value="$s['eskiz_email'] ?? ''" />

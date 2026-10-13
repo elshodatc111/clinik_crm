@@ -49,6 +49,35 @@
     </div>
 </div>
 
+<div class="card mt-5 overflow-hidden" x-data="{ copied: false }">
+    <div class="section-title justify-between"><span class="flex items-center gap-2"><x-icon name="server" class="w-4 h-4 text-brand" />{{ __('Fon jarayonlari (scheduler va worker)') }}</span>
+        <span class="badge ring-1 ring-inset {{ $tone[$scheduler['status']] }}">{{ $scheduler['status'] === 'ok' ? __('Cron ishlayapti') : ($scheduler['status'] === 'warn' ? __('Cron kechikmoqda') : __('Cron ishlamayapti')) }}</span></div>
+    @if($scheduler['status'] !== 'ok')
+    <div class="mx-5 mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 space-y-2">
+        <div class="font-medium">{{ __("Scheduler ishlamayapti — SMS eslatmalar, billing, zaxira va bronlarni bo'shatish bajarilmaydi.") }}</div>
+        <div>{{ __('cPanel → Cron Jobs (Задания cron) → «Каждую минуту» (* * * * *) tanlab, quyidagi buyruqni kiriting:') }}</div>
+        <div class="flex items-center gap-2"><code class="flex-1 rounded bg-white border border-amber-200 px-3 py-2 text-xs break-all select-all">{{ $scheduler['command'] }}</code>
+            <button type="button" class="btn btn-sm" @click="navigator.clipboard && navigator.clipboard.writeText(@js($scheduler['command'])); copied = true"><x-icon name="copy" class="w-3.5 h-3.5" /><span x-text="copied ? @js(__('Nusxalandi')) : @js(__('Nusxalash'))"></span></button></div>
+        <div class="text-xs text-amber-800">{{ __("PHP versiyasi (ea-php83 kabi) hosting sozlamasidagi versiyaga mos bo'lsin. Cron qo'shilgach 1–2 daqiqada bu yerda yashil belgi chiqadi.") }}</div>
+    </div>
+    @endif
+    <div class="overflow-x-auto"><table class="w-full text-sm">
+        <thead><tr><th class="th">{{ __('Vazifa') }}</th><th class="th">{{ __('Jadval') }}</th><th class="th">{{ __('Oxirgi ishga tushish') }}</th><th class="th">{{ __('Holat') }}</th><th class="th">{{ __('Davomiyligi') }}</th><th class="th">{{ __('Ishga tushgan / xato') }}</th><th class="th"></th></tr></thead>
+        @foreach($tasks as $t)
+            <tr class="border-t border-slate-100">
+                <td class="td"><div class="font-medium">{{ __($t['label']) }}</div><div class="text-[11px] text-slate-400 font-mono">{{ $t['name'] }}</div>@if($t['message'])<div class="text-xs text-red-600 mt-0.5">{{ $t['message'] }}</div>@endif</td>
+                <td class="td text-slate-500 whitespace-nowrap">{{ __($t['every']) }}</td>
+                <td class="td whitespace-nowrap">{{ $t['last'] ? $t['last']->format('d.m H:i:s') : '—' }}<div class="text-xs text-slate-400">{{ \App\Services\TaskMonitor::ago($t['age']) }}</div></td>
+                <td class="td"><span class="badge ring-1 ring-inset {{ $tone[$t['status']] }}">{{ __($t['note']) }}</span></td>
+                <td class="td whitespace-nowrap text-slate-500">{{ $t['ms'] }} ms</td>
+                <td class="td whitespace-nowrap">{{ $t['runs'] }} / <span class="{{ $t['fails'] ? 'text-red-600 font-medium' : '' }}">{{ $t['fails'] }}</span></td>
+                <td class="td text-right">@if($t['run'])<form method="POST" action="{{ route('admin.system.run', $t['name']) }}">@csrf<button class="btn btn-sm"><x-icon name="play" class="w-3.5 h-3.5" />{{ __('Hozir ishga tushirish') }}</button></form>@endif</td>
+            </tr>
+        @endforeach
+    </table></div>
+    <div class="px-5 py-3 text-xs text-slate-500 border-t border-slate-100">{{ __("Navbat (queue) worker: loyiha hozir «sync» rejimida — alohida worker kerak emas. Yurak urishi har daqiqa ishlaydigan vazifadan olinadi.") }}</div>
+</div>
+
 <div class="card mt-5 overflow-hidden">
     <div class="section-title"><x-icon name="shield" class="w-4 h-4 text-brand" />{{ __('Server salomatligi') }}</div>
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 p-5">

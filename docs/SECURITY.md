@@ -22,3 +22,8 @@
 7. Oferta va maxfiylik siyosatini yurist ko'rib chiqsin; Sozlamalarda kompaniya rekvizitlarini kiriting.
 8. Zaxiradan tiklashni bir marta sinab ko'ring.
 9. Brauzer konsolida CSP buzilishlari yo'qligini tekshirib, `SECURITY_CSP=enforce` qoldiring.
+
+## Cron (ahost.uz / cPanel)
+cPanel → Cron Jobs → «Каждую минуту» (* * * * *):
+`/usr/local/bin/ea-php83 /home/<user>/clinik_crm/artisan schedule:run >> /dev/null 2>&1`
+Tekshirish: Super Admin → Tizim holati → «Fon jarayonlari» (yashil bo'lishi kerak).
