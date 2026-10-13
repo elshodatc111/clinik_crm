@@ -1,0 +1,32 @@
+DIQQAT: bu matn NAMUNA. Ishga tushirishdan oldin yurist tomonidan ko'rib chiqilib, Super Admin panelidagi "Oferta" bo'limida yangi versiya sifatida kiritilishi shart.
+
+1. UMUMIY QOIDALAR
+1.1. Mazkur ommaviy oferta (keyingi o'rinlarda — Oferta) dastur ta'minoti egasi (Ijrochi) va dasturdan foydalanuvchi tibbiyot muassasasi (Buyurtmachi) o'rtasidagi munosabatlarni tartibga soladi.
+1.2. Buyurtmachi ro'yxatdan o'tishda "Ofertaga roziman" belgisini qo'yish orqali Oferta shartlarini to'liq qabul qilgan hisoblanadi. Rozilik vaqti, IP-manzil va Oferta versiyasi saqlanadi.
+
+2. XIZMAT PREDMETI
+2.1. Ijrochi Buyurtmachiga klinikani boshqarish uchun bulutli CRM tizimidan foydalanish huquqini beradi.
+2.2. Har bir klinika ma'lumotlari boshqa klinikalardan to'liq alohida saqlanadi va ularga boshqa klinikalar kira olmaydi.
+
+3. DEMO VA OBUNA
+3.1. Yangi Buyurtmachiga 14 kunlik bepul demo davri beriladi.
+3.2. Demo davri tugagunga qadar obunaga o'tilmasa, Buyurtmachiga xabar yuboriladi va demo davrida kiritilgan barcha ma'lumotlar avtomatik o'chiriladi.
+3.3. Obunaga o'tish uchun bir martalik ulanish to'lovi va keyin oylik (30 kunlik) obuna to'lovi to'lanadi. Ulanish to'lovi to'langandan so'ng birinchi oy bepul.
+3.4. Oylik to'lov summasi tizimdagi bemorlar soniga qarab tarif bo'yicha belgilanadi. Bemorlar soni tarif limitidan oshsa, joriy oy oxirigacha xizmat davom etadi va keyingi oydan yuqori tarif bo'yicha hisoblanadi.
+3.5. To'lovlar klinika balansi orqali amalga oshiriladi. Balans Payme to'lov tizimi (Merchant) orqali to'ldiriladi. Oylik to'lov balansdan avtomatik yechiladi.
+
+4. TO'LOV KECHIKTIRILISHI
+4.1. Oylik to'lov amalga oshirilmasa, tizim faqat ko'rish rejimiga o'tadi.
+4.2. 3-oy yakunigacha to'lov amalga oshirilmasa, klinika to'liq bloklanadi va ro'yxatdan o'tgan telefon raqamiga SMS yuboriladi.
+4.3. Bloklangandan keyin 30 kun ichida to'lov amalga oshirilmasa, shartnoma bekor qilinadi va barcha ma'lumotlar o'chiriladi.
+4.4. Ma'lumotlarni eksport qilish imkoniyati bloklash davrida ham saqlanadi.
+
+5. MA'LUMOTLAR VA MAXFIYLIK
+5.1. Buyurtmachi bemorlarning shaxsiy ma'lumotlarini qonunchilikka muvofiq yig'ish va qayta ishlash uchun mustaqil javobgar.
+5.2. Ijrochi ma'lumotlarni uchinchi shaxslarga bermaydi, qonunda nazarda tutilgan hollar bundan mustasno.
+
+6. JAVOBGARLIK
+6.1. Tizim "mavjud holatda" taqdim etiladi. Ijrochi texnik uzilishlar uchun, agar ular Ijrochi aybisiz yuz bergan bo'lsa, javobgar emas.
+
+7. REKVIZITLAR VA ALOQA
+Ijrochi rekvizitlari va aloqa ma'lumotlari tizim sozlamalarida ko'rsatiladi.
