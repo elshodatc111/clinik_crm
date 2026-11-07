@@ -9,12 +9,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('sms_codes', function (Blueprint $t) {
-            $t->string('purpose', 20)->default('register')->after('phone');
-            $t->string('channel', 10)->default('sms')->after('purpose');
-        });
+        // Idempotent: MySQL'da DDL tranzaksiyaga kirmaydi, migratsiya yarim yo'lda to'xtagan bo'lishi mumkin
+        if (! Schema::hasColumn('sms_codes', 'purpose')) {
+            Schema::table('sms_codes', fn (Blueprint $t) => $t->string('purpose', 20)->default('register')->after('phone'));
+        }
+        if (! Schema::hasColumn('sms_codes', 'channel')) {
+            Schema::table('sms_codes', fn (Blueprint $t) => $t->string('channel', 10)->default('sms')->after('purpose'));
+        }
 
-        Schema::create('otp_telegram_requests', function (Blueprint $t) {
+        if (! Schema::hasTable('otp_telegram_requests')) Schema::create('otp_telegram_requests', function (Blueprint $t) {
             $t->id();
             $t->string('phone', 20)->index();
             $t->string('purpose', 20); // register | reset
@@ -28,7 +31,7 @@ return new class extends Migration
         });
 
         // Tasdiqlangan "telefon <-> Telegram chat" bog'lanishi
-        Schema::create('otp_telegram_links', function (Blueprint $t) {
+        if (! Schema::hasTable('otp_telegram_links')) Schema::create('otp_telegram_links', function (Blueprint $t) {
             $t->id();
             $t->string('phone', 20)->unique();
             $t->unsignedBigInteger('chat_id')->index();
