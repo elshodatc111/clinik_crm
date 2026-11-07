@@ -7,7 +7,7 @@
     @csrf
     <x-field name="clinic_name" :label="__('Klinika nomi')" :value="old('clinic_name')" required />
     <x-field name="owner_name" :label="__('Rahbar F.I.Sh.')" :value="old('owner_name')" required />
-    <x-field name="phone" type="tel" :label="__('Telefon raqami')" :value="old('phone')" placeholder="+998 90 123 45 67" :hint="__('SMS orqali tasdiqlash kodi yuboriladi')" required />
+    <x-field name="phone" type="tel" :label="__('Telefon raqami')" :value="old('phone')" placeholder="+998 90 123 45 67" :hint="__('Raqamingiz Telegram bot orqali tasdiqlanadi')" required />
     <x-field name="email" type="email" :label="__('Email (ixtiyoriy)')" :value="old('email')" />
     <x-field name="password" type="password" :label="__('Parol (kamida 8 belgi)')" required />
     <x-field name="password_confirmation" type="password" :label="__('Parolni takrorlang')" required />

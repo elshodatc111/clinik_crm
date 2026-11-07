@@ -4,6 +4,7 @@
     @include('partials.head')
     <title>@yield('title', $brand['name'])</title>
     <meta name="description" content="@yield('description', __('Xususiy klinikalar uchun to\'liq avtomatlashtirilgan CRM tizimi'))">
+    @include('partials.seo')
 </head>
 <body class="bg-white text-slate-800 antialiased">
 @php

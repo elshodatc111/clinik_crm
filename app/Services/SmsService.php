@@ -48,10 +48,29 @@ class SmsService
             return false;
         }
 
+        // Platforma xabarlari: avval USB modem (SMS Gateway), u ishlamasa Eskiz zaxirasi.
+        // Klinikaning bemorlarga SMS'lari modemga TEGMAYDI — faqat klinikaning o'z Eskiz akkaunti.
+        $gwNote = null;
+        if (! $viaClinic && GatewaySms::enabled()) {
+            $g = GatewaySms::send($phone, $text);
+            if ($g['ok']) {
+                $log->update(['status' => 'sent', 'response' => 'Modem (SMS Gateway) orqali yuborildi']);
+
+                return true;
+            }
+            $gwNote = $g['note'];
+            if (! $g['fallback']) {
+                $log->update(['status' => 'failed', 'response' => mb_substr((string) $gwNote, 0, 1000)]);
+
+                return false;
+            }
+        }
+        $pre = $gwNote ? $gwNote.' → Eskiz. ' : '';
+
         $creds = $viaClinic ? static::clinicCreds($clinicId) : static::platformCreds();
         if (! $creds) {
             Log::info("SMS (Eskiz sozlanmagan) -> {$phone}: ".($event === 'otp' ? '[kod yashirilgan]' : $text));
-            $log->update(['status' => 'skipped', 'response' => $viaClinic ? 'Klinika Eskiz akkaunti ulanmagan' : 'Eskiz sozlanmagan']);
+            $log->update(['status' => 'skipped', 'response' => $pre.($viaClinic ? 'Klinika Eskiz akkaunti ulanmagan' : 'Eskiz sozlanmagan')]);
 
             return false;
         }
@@ -63,11 +82,11 @@ class SmsService
                 $res = static::post($creds, $phone, $text);
             }
             $ok = $res->successful();
-            $log->update(['status' => $ok ? 'sent' : 'failed', 'response' => mb_substr($res->body(), 0, 1000)]);
+            $log->update(['status' => $ok ? 'sent' : 'failed', 'response' => mb_substr($pre.$res->body(), 0, 1000)]);
 
             return $ok;
         } catch (\Throwable $e) {
-            $log->update(['status' => 'failed', 'response' => mb_substr($e->getMessage(), 0, 1000)]);
+            $log->update(['status' => 'failed', 'response' => mb_substr($pre.$e->getMessage(), 0, 1000)]);
 
             return false;
         }

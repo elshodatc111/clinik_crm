@@ -1,5 +1,15 @@
 @extends('layouts.public')
 @section('title', $brand['name'].' — '.__('Klinika uchun CRM tizimi'))
+@section('description', __("Bemorlar, qabul, tibbiy karta, kassa, tahlillar, onlayn yozilish va SMS — klinikangiz uchun bitta tizimda. :n kunlik bepul demo.", ['n' => $demoDays]))
+@push('seo')
+<script type="application/ld+json">{!! json_encode([
+    '@context' => 'https://schema.org', '@type' => 'SoftwareApplication', 'name' => $brand['name'],
+    'applicationCategory' => 'BusinessApplication', 'operatingSystem' => 'Web',
+    'description' => __("Xususiy klinikalar uchun to'liq avtomatlashtirilgan CRM tizimi"),
+    'url' => url('/'), 'inLanguage' => app()->getLocale(),
+    'offers' => $plans->map(fn ($p) => ['@type' => 'Offer', 'name' => $p->name, 'priceCurrency' => 'UZS', 'price' => (string) (int) $p->monthly_price])->values()->all(),
+], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) !!}</script>
+@endpush
 @section('content')
 @php
 $features = [

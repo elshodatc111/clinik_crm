@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 Route::get('/offer', [LandingController::class, 'offer'])->name('offer');
 Route::get('/privacy', [LandingController::class, 'privacy'])->name('privacy');
+Route::get('/robots.txt', [\App\Http\Controllers\SeoController::class, 'robots'])->name('seo.robots');
+Route::get('/sitemap.xml', [\App\Http\Controllers\SeoController::class, 'sitemap'])->name('seo.sitemap');
+// Telegram bot webhook (maxfiy sarlavha bilan himoyalangan)
+Route::post('/telegram/webhook', [\App\Http\Controllers\TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
 Route::get('/lang/{locale}', [LandingController::class, 'lang'])->name('lang');
 
 Route::middleware('guest')->group(function () {
@@ -23,6 +27,14 @@ Route::middleware('guest')->group(function () {
     Route::get('/register/verify', [AuthController::class, 'verifyForm'])->name('register.verify');
     Route::post('/register/verify', [AuthController::class, 'verify'])->middleware('throttle:30,10')->name('register.verify.post');
     Route::post('/register/resend', [AuthController::class, 'resend'])->middleware('throttle:6,10')->name('register.resend');
+    // Telegram bot orqali tasdiqlash (ro'yxatdan o'tish va parolni tiklash uchun umumiy)
+    Route::post('/telegram-otp', [AuthController::class, 'telegramOtp'])->middleware('throttle:20,10')->name('otp.telegram');
+    Route::get('/telegram-otp/status', [AuthController::class, 'telegramOtpStatus'])->middleware('throttle:90,1')->name('otp.telegram.status');
+    // Parolni tiklash
+    Route::get('/forgot', [AuthController::class, 'forgotForm'])->name('password.forgot');
+    Route::post('/forgot', [AuthController::class, 'forgot'])->middleware('throttle:20,10')->name('password.forgot.post');
+    Route::get('/forgot/verify', [AuthController::class, 'forgotVerifyForm'])->name('password.verify');
+    Route::post('/forgot/verify', [AuthController::class, 'forgotReset'])->middleware('throttle:30,10')->name('password.reset');
 });
 
 // Xodim ofertani qabul qilish (kirgandan keyin majburiy)
@@ -93,6 +105,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])
 
     Route::get('settings', [Admin\SettingController::class, 'edit'])->name('settings.edit');
     Route::put('settings', [Admin\SettingController::class, 'update'])->name('settings.update');
+    Route::post('settings/telegram', [Admin\SettingController::class, 'telegram'])->name('settings.telegram');
+    Route::post('settings/gateway-check', [Admin\SettingController::class, 'gatewayCheck'])->name('settings.gateway-check');
 
     Route::get('offers', [Admin\OfferController::class, 'index'])->name('offers.index');
     Route::post('offers', [Admin\OfferController::class, 'store'])->name('offers.store');

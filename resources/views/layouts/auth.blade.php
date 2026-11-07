@@ -2,6 +2,7 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
     @include('partials.head')
+    <meta name="robots" content="noindex,nofollow">
     <title>@yield('title') — {{ $brand['name'] }}</title>
 </head>
 <body class="bg-gradient-to-br from-blue-50 via-white to-slate-100 min-h-screen flex items-center justify-center p-4">

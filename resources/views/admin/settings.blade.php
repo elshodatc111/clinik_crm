@@ -74,6 +74,57 @@
             <x-field name="eskiz_from" :label="__('Yuboruvchi (from)')" :value="$s['eskiz_from'] ?? '4546'" />
         </div>
     </div>
+
+    <div class="card p-6">
+        <div class="font-semibold mb-1">{{ __('SMS Gateway (USB modem)') }}</div>
+        <p class="text-xs text-slate-500 mb-4">{{ __("Platforma xabarlari (ro'yxatdan o'tish kodi zaxirasi, obuna xabarlari) avval modem orqali, ishlamasa Eskiz orqali yuboriladi. Klinikaning bemorlarga SMS'lari modemga tegmaydi — ular klinikaning o'z Eskiz akkaunti orqali ketadi.") }}</p>
+        <div class="grid md:grid-cols-2 gap-4">
+            <x-field name="sms_gateway_url" :label="__('Gateway manzili')" :value="$s['sms_gateway_url'] ?? 'https://sms.elshod.date'" placeholder="https://sms.elshod.date" />
+            <x-field name="sms_gateway_key" type="password" :label="__('Gateway API kaliti')" :hint="! empty($s['sms_gateway_key']) ? __('Saqlangan. O\'zgartirish uchun yangisini kiriting.') : null" attrs='autocomplete="new-password"' />
+            <x-field name="sms_gateway_on" type="checkbox" :label="__('Modem orqali yuborishni yoqish')" :value="($s['sms_gateway_on'] ?? '1') !== '0'" />
+            @if(! empty($s['sms_gateway_key']))<x-field name="forget_gateway_key" type="checkbox" :label="__('Saqlangan kalitni o\'chirish')" :value="false" />@endif
+        </div>
+    </div>
     <button class="btn btn-primary">{{ __('Saqlash') }}</button>
 </form>
+
+@php($gwOn = \App\Services\GatewaySms::enabled())
+<div class="max-w-4xl mt-6 space-y-6">
+    <div class="card p-6">
+        <div class="flex items-center justify-between gap-3 mb-3">
+            <div class="font-semibold">{{ __('Modemni tekshirish') }}</div>
+            <span class="badge {{ $gwOn ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600' }}">{{ $gwOn ? __('Asosiy kanal (Eskiz — zaxira)') : __("O'chiq (faqat Eskiz)") }}</span>
+        </div>
+        <form method="POST" action="{{ route('admin.settings.gateway-check') }}">@csrf <button class="btn btn-sm">{{ __('Gateway ulanishini tekshirish') }}</button></form>
+    </div>
+
+    @php($tgOk = \App\Services\TelegramOtp::available())
+    <div class="card p-6" id="telegram">
+        <div class="flex items-center justify-between gap-3 mb-1">
+            <div class="font-semibold">{{ __('Telegram bot (telefonni tasdiqlash)') }}</div>
+            @if(! empty($s['tg_bot_username']) && ($s['tg_bot_status'] ?? '') === 'ok')
+                <span class="badge bg-emerald-50 text-emerald-700">&#64;{{ $s['tg_bot_username'] }}</span>
+            @else
+                <span class="badge bg-amber-50 text-amber-700">{{ __('Ulanmagan') }}</span>
+            @endif
+        </div>
+        <p class="text-xs text-slate-500 mb-4">{{ __("Ro'yxatdan o'tish va parolni tiklashda kod shu bot orqali Telegramga yuboriladi. Alohida bot yarating: @BotFather → /newbot → token. Bot ulanganda webhook avtomatik o'rnatiladi (sayt HTTPS bo'lishi shart).") }}</p>
+        <form method="POST" action="{{ route('admin.settings.telegram') }}" class="grid md:grid-cols-[1fr_auto] gap-3 items-end">
+            @csrf <input type="hidden" name="action" value="connect">
+            <x-field name="tg_bot_token" type="password" :label="__('Bot tokeni')" :hint="! empty($s['tg_bot_token']) ? __('Saqlangan. O\'zgartirish uchun yangisini kiriting.') : null" attrs='autocomplete="new-password"' />
+            <button class="btn btn-primary">{{ __('Ulash va webhookni o\'rnatish') }}</button>
+        </form>
+        @if(! empty($s['tg_bot_token']))
+        <div class="flex flex-wrap items-center gap-3 mt-4">
+            <form method="POST" action="{{ route('admin.settings.telegram') }}" class="flex items-center gap-2">
+                @csrf <input type="hidden" name="action" value="toggle">
+                <x-field name="tg_otp_enabled" type="checkbox" :label="__('Telegram orqali tasdiqlashni yoqish')" :value="($s['tg_otp_enabled'] ?? '1') !== '0'" />
+                <button class="btn btn-sm">{{ __('Saqlash') }}</button>
+            </form>
+            <form method="POST" action="{{ route('admin.settings.telegram') }}">@csrf <input type="hidden" name="action" value="check"><button class="btn btn-sm">{{ __('Webhookni tekshirish') }}</button></form>
+            <form method="POST" action="{{ route('admin.settings.telegram') }}" onsubmit="return confirm('{{ __('Botni uzamizmi?') }}')">@csrf <input type="hidden" name="action" value="disconnect"><button class="btn btn-sm btn-danger">{{ __('Uzish') }}</button></form>
+        </div>
+        @endif
+    </div>
+</div>
 @endsection
