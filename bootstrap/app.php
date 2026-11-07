@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Proksi ortida: haqiqiy mijoz IP'si va https sxemasi (Cloudflare → NPM → konteyner)
+        $middleware->prepend(\App\Http\Middleware\RealClientIp::class);
+        $middleware->trustProxies(at: '*', headers: \Illuminate\Http\Request::HEADER_X_FORWARDED_FOR | \Illuminate\Http\Request::HEADER_X_FORWARDED_HOST | \Illuminate\Http\Request::HEADER_X_FORWARDED_PORT | \Illuminate\Http\Request::HEADER_X_FORWARDED_PROTO);
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureRole::class,
             'clinic' => \App\Http\Middleware\ClinicAccess::class,

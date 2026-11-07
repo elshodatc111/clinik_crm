@@ -19,28 +19,28 @@ Route::get('/lang/{locale}', [LandingController::class, 'lang'])->name('lang');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'loginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:60,1')->name('login.post');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:60,1,login-post-22')->name('login.post');
     Route::get('/login/2fa', [AuthController::class, 'twoFactorForm'])->name('login.2fa');
-    Route::post('/login/2fa', [AuthController::class, 'twoFactor'])->middleware('throttle:20,1')->name('login.2fa.post');
+    Route::post('/login/2fa', [AuthController::class, 'twoFactor'])->middleware('throttle:20,1,login-2fa-post-24')->name('login.2fa.post');
     Route::get('/register', [AuthController::class, 'registerForm'])->name('register');
-    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:20,10')->name('register.post');
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:20,10,register-post-26')->name('register.post');
     Route::get('/register/verify', [AuthController::class, 'verifyForm'])->name('register.verify');
-    Route::post('/register/verify', [AuthController::class, 'verify'])->middleware('throttle:30,10')->name('register.verify.post');
-    Route::post('/register/resend', [AuthController::class, 'resend'])->middleware('throttle:6,10')->name('register.resend');
+    Route::post('/register/verify', [AuthController::class, 'verify'])->middleware('throttle:30,10,register-verify-post-28')->name('register.verify.post');
+    Route::post('/register/resend', [AuthController::class, 'resend'])->middleware('throttle:6,10,register-resend-29')->name('register.resend');
     // Telegram bot orqali tasdiqlash (ro'yxatdan o'tish va parolni tiklash uchun umumiy)
-    Route::post('/telegram-otp', [AuthController::class, 'telegramOtp'])->middleware('throttle:20,10')->name('otp.telegram');
-    Route::get('/telegram-otp/status', [AuthController::class, 'telegramOtpStatus'])->middleware('throttle:90,1')->name('otp.telegram.status');
+    Route::post('/telegram-otp', [AuthController::class, 'telegramOtp'])->middleware('throttle:20,10,otp-telegram-31')->name('otp.telegram');
+    Route::get('/telegram-otp/status', [AuthController::class, 'telegramOtpStatus'])->middleware('throttle:90,1,otp-telegram-status-32')->name('otp.telegram.status');
     // Parolni tiklash
     Route::get('/forgot', [AuthController::class, 'forgotForm'])->name('password.forgot');
-    Route::post('/forgot', [AuthController::class, 'forgot'])->middleware('throttle:20,10')->name('password.forgot.post');
+    Route::post('/forgot', [AuthController::class, 'forgot'])->middleware('throttle:20,10,password-forgot-post-35')->name('password.forgot.post');
     Route::get('/forgot/verify', [AuthController::class, 'forgotVerifyForm'])->name('password.verify');
-    Route::post('/forgot/verify', [AuthController::class, 'forgotReset'])->middleware('throttle:30,10')->name('password.reset');
+    Route::post('/forgot/verify', [AuthController::class, 'forgotReset'])->middleware('throttle:30,10,password-reset-37')->name('password.reset');
 });
 
 // Xodim ofertani qabul qilish (kirgandan keyin majburiy)
 Route::middleware('auth')->group(function () {
     Route::get('/offer/accept', [\App\Http\Controllers\OfferAcceptController::class, 'show'])->name('offer.accept');
-    Route::post('/offer/accept', [\App\Http\Controllers\OfferAcceptController::class, 'accept'])->middleware('throttle:20,1')->name('offer.accept.post');
+    Route::post('/offer/accept', [\App\Http\Controllers\OfferAcceptController::class, 'accept'])->middleware('throttle:20,1,offer-accept-post-43')->name('offer.accept.post');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -56,10 +56,10 @@ Route::prefix('k/{slug}')->name('booking.')->group(function () {
     $b = \App\Http\Controllers\BookingController::class;
     Route::get('/', [$b, 'show'])->name('show');
     Route::get('/offer', [$b, 'offer'])->name('offer');
-    Route::get('/slots', [$b, 'slots'])->middleware('throttle:60,1')->name('slots');
-    Route::post('/book', [$b, 'book'])->middleware('throttle:10,1')->name('book');
+    Route::get('/slots', [$b, 'slots'])->middleware('throttle:60,1,slots-59')->name('slots');
+    Route::post('/book', [$b, 'book'])->middleware('throttle:10,1,book-60')->name('book');
     Route::get('/t/{token}', [$b, 'ticket'])->name('ticket');
-    Route::get('/t/{token}/status', [$b, 'status'])->middleware('throttle:60,1')->name('status');
+    Route::get('/t/{token}/status', [$b, 'status'])->middleware('throttle:60,1,status-62')->name('status');
     Route::post('/t/{token}/simulate', [$b, 'simulate'])->name('simulate');
 });
 
@@ -72,9 +72,9 @@ Route::middleware(['auth', 'offer'])->prefix('account')->name('account.')->group
     Route::delete('avatar', [$a, 'removeAvatar'])->name('avatar.delete');
     $t = \App\Http\Controllers\TwoFactorController::class;
     Route::post('2fa/start', [$t, 'start'])->name('2fa.start');
-    Route::post('2fa/confirm', [$t, 'confirm'])->middleware('throttle:10,1')->name('2fa.confirm');
+    Route::post('2fa/confirm', [$t, 'confirm'])->middleware('throttle:10,1,2fa-confirm-75')->name('2fa.confirm');
     Route::post('2fa/disable', [$t, 'disable'])->name('2fa.disable');
-    Route::post('2fa/recovery', [$t, 'recovery'])->middleware('throttle:5,1')->name('2fa.recovery');
+    Route::post('2fa/recovery', [$t, 'recovery'])->middleware('throttle:5,1,2fa-recovery-77')->name('2fa.recovery');
 });
 
 // Bildirishnomalar (klinika xodimlari va super admin) va ilovani o'rnatish (PWA)
@@ -125,7 +125,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])
         Route::get('/', [$s, 'index'])->name('index');
         Route::post('settings', [$s, 'settings'])->name('settings');
         Route::post('connection', [$s, 'connection'])->name('connection');
-        Route::post('test', [$s, 'test'])->middleware('throttle:10,1')->name('test');
+        Route::post('test', [$s, 'test'])->middleware('throttle:10,1,test-128')->name('test');
         Route::post('{event}', [$s, 'save'])->name('save');
         Route::post('{event}/submit', [$s, 'submit'])->name('submit');
         Route::post('{event}/check', [$s, 'check'])->name('check');
@@ -137,7 +137,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:super_admin'])
     Route::get('payments/{payment}/receipt', [Admin\ManualPaymentController::class, 'receipt'])->name('payments.receipt');
     Route::post('payments/{payment}/approve', [Admin\ManualPaymentController::class, 'approve'])->name('payments.approve');
     Route::post('payments/{payment}/reject', [Admin\ManualPaymentController::class, 'reject'])->name('payments.reject');
-    Route::post('system/run/{task}', [Admin\SystemController::class, 'run'])->middleware('throttle:6,1')->name('system.run');
+    Route::post('system/run/{task}', [Admin\SystemController::class, 'run'])->middleware('throttle:6,1,system-run-140')->name('system.run');
     Route::get('system', [Admin\SystemController::class, 'index'])->name('system.index');
     Route::get('notifications', [Admin\BroadcastController::class, 'index'])->name('notifications.index');
     Route::post('notifications', [Admin\BroadcastController::class, 'send'])->name('notifications.send');
@@ -158,7 +158,7 @@ Route::prefix('app')->name('app.')->middleware(['auth', 'offer', 'clinic'])->gro
         Route::get('billing', [AppC\BillingController::class, 'index'])->name('billing');
         Route::post('billing/topup', [AppC\BillingController::class, 'topup'])->name('billing.topup');
         Route::post('billing/subscribe', [AppC\BillingController::class, 'subscribe'])->name('billing.subscribe');
-        Route::post('billing/manual', [AppC\BillingController::class, 'manualStore'])->middleware('throttle:10,60')->name('billing.manual');
+        Route::post('billing/manual', [AppC\BillingController::class, 'manualStore'])->middleware('throttle:10,60,billing-manual-161')->name('billing.manual');
         Route::get('billing/manual/{payment}/receipt', [AppC\BillingController::class, 'manualReceipt'])->name('billing.manual.receipt');
         Route::delete('billing/manual/{payment}', [AppC\BillingController::class, 'manualCancel'])->name('billing.manual.cancel');
         Route::get('export/patients', [AppC\ExportController::class, 'patients'])->name('export.patients');
@@ -167,7 +167,7 @@ Route::prefix('app')->name('app.')->middleware(['auth', 'offer', 'clinic'])->gro
     // Bemorlar
     Route::middleware('role:clinic_admin,receptionist,doctor,cashier')->get('patients/search', [AppC\PatientController::class, 'search'])->name('patients.search');
     Route::middleware('role:clinic_admin,receptionist')->group(function () {
-        Route::get('patients/lookup', [AppC\PatientController::class, 'lookup'])->middleware('throttle:30,1')->name('patients.lookup');
+        Route::get('patients/lookup', [AppC\PatientController::class, 'lookup'])->middleware('throttle:30,1,patients-lookup-170')->name('patients.lookup');
         Route::get('patients/create', [AppC\PatientController::class, 'create'])->name('patients.create');
         Route::post('patients', [AppC\PatientController::class, 'store'])->name('patients.store');
         Route::get('patients/{patient}/edit', [AppC\PatientController::class, 'edit'])->name('patients.edit');

@@ -34,7 +34,7 @@ class PatientBalanceController extends Controller
         }
         Payment::create([
             'invoice_id' => null, 'patient_id' => $patient->id, 'amount' => $d['amount'], 'method' => $d['method'],
-            'cashier_id' => $r->user()->id, 'paid_at' => now(), 'note' => $d['note'] ?: __('Avans'),
+            'cashier_id' => $r->user()->id, 'paid_at' => now(), 'note' => ($d['note'] ?? null) ?: __('Avans'),
         ]);
 
         return back()->with('success', __('Avans qabul qilindi.'));
